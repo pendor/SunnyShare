@@ -13,103 +13,77 @@
 		You should have received a copy of the GNU General Public License
 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	*/
-	$phproot = '/www/';
-  if (isset($_FILES['file'])) {
-    $path = $_POST['uploaddir'];
-    if(strpos($path, $phproot) !== 0 || strpos($path, '..') !== FALSE) {
-      echo "Bad upload path";
-      exit;
-    }
-    if(substr($path, -1) != '/') {
-      $path .= '/';
-    }
+  
+  // FIXME: Too much hardcoded crap here...
+  $upRoot = '/mnt/data';
+  $allowedUploadRoots = array( 'Shared', 'Extra' );
+	
+  if(isset($_FILES['file'])) {
+    $urlPath = rtrim(ltrim($_POST['uploaddir'], '/'), '/');
   } else {
-    list($path) = explode('?', $_SERVER['REQUEST_URI']);
-    $path = $phproot . ltrim(rawurldecode($path), '/');
+    list($urlPath) = explode('?', $_SERVER['REQUEST_URI']);
+    $urlPath = rtrim(ltrim(rawurldecode($urlPath), '/'), '/');  
+  }
+    
+  if(strpos($urlPath, '..') !== FALSE) {
+    httperr(403, 'Bad upload path - no double dots allowed in filename');
   }
   
+  $path = $upRoot . '/' . $urlPath;
+  
   // Can't call the script directly since REQUEST_URI won't be a directory
-  if($_SERVER['PHP_SELF'] == '/'.$path) {
-  	die("Unable to call " . $path . " directly.");
+  if($_SERVER['PHP_SELF'] == $path || strpos($path, $_SERVER['PHP_SELF']) !== FALSE) {
+    httperr(500, 'Can\'t call index directly');
+  }
+  
+  $rootOk = false;
+  foreach($allowedUploadRoots as $rt) {
+    if($urlPath == $rt || strpos($urlPath, $rt . '/') === 0) {
+      $rootOk = true;
+    }
+  }
+  if(!$rootOk) {
+    httperr(403, 'Bad upload path (not in approved root): ' . $urlPath);
   }
 
   // Make sure it is valid.
   if(!is_dir($path)) {
-  	die("<b>" . $path . "</b> is not a valid path.");
+  	httperr(403, 'Bad upload path (not directory): ' . $path);
   }
-  $canupload = !is_file($path . '.noupload');
-  $urlpath = substr($path, strlen($phproot) - 1);
+  
+  $canupload = !is_file($path . '/.noupload');
 
-  $ignores = array( '.', 'LICENSE', 'README.md', '.noupload' );
+  $ignores = array( '.', 'LICENSE', 'README.md', 'README.txt', 'readme.txt', '.noupload',
+    pathinfo(__FILE__, PATHINFO_BASENAME) );
 
-  $realparent = realpath($path . '/..');
-  if($realparent == $phproot || $realparent . '/' == $phproot || strpos($realparent.'/', $phproot) !== 0) {
+  // Omit .. if in one of the roots already
+  if(in_array($urlPath, $allowedUploadRoots)) {
     $ignores[] = '..';
   } 
 
-	// =============={ Configuration Begin }==============
 	$settings = array(
 		// Directory to store uploaded files
-		'uploaddir' => $path,
-    'urlpath'   => $urlpath,
-    
-		// Display debugging information
-		'debug'     => false,
+		'uploaddir'         => $path,
+    'urlpath'           => $urlPath,
 
-		// Complete URL to your directory (including tracing slash)
-		'url'       => 'http://sunnyshare.lan/' . $urlpath,
+		// Complete URL to your directory
+		'url'               => 'http://sunnyshare.lan/' . $urlpath,
 
 		// Files that will be ignored
-		'ignores'   => $ignores,
-		
-		'badext'    => array( 'php', 'php3', 'php4', 'php5', 
-		                      'pl', 'cgi', 'sh', 'noupload' ),
-	);
-	// =============={ Configuration End }==============
+		'ignores'           => $ignores,
+		'badext'            => array( 'php', 'php3', 'php4', 'php5', 'pl', 'cgi', 'sh', 'noupload' ),
 
-	// Enabling error reporting
-	if ($settings['debug']) {
-		error_reporting(E_ALL);
-		ini_set('display_startup_errors',1);
-		ini_set('display_errors',1);
-	}
+	  'scriptname'        => pathinfo(__FILE__, PATHINFO_BASENAME),
+	  'max_upload_size'   => ini_get('upload_max_filesize'),
+  );
 
-	$data = array();
-
-	// Name of this file
-	$data['scriptname'] = pathinfo(__FILE__, PATHINFO_BASENAME);
-
-	// Adding current script name to ignore list
-	$data['ignores'] = $settings['ignores'];
-	$data['ignores'][] = $data['scriptname'];
-
-	// Use canonized path
-	$data['uploaddir'] = realpath($settings['uploaddir']);
-
-	// Maximum upload size, set by system
-	$data['max_upload_size'] = ini_get('upload_max_filesize');
-
-	// If debug is enabled, logging all variables
-	if ($settings['debug']) {
-		// Displaying debug information
-		echo '<h2>Settings:</h2>';
-		echo '<pre>';
-		print_r($settings);
-		echo '</pre>';
-
-		// Displaying debug information
-		echo '<h2>Data:</h2>';
-		echo '<pre>';
-		print_r($data);
-		echo '</pre>';
-		echo '</pre>';
-
-		// Displaying debug information
-		echo '<h2>SESSION:</h2>';
-		echo '<pre>';
-		print_r($_SESSION);
-		echo '</pre>';
-	}
+  function httperr($code, $text) {
+    // Special handling for CGI:
+    header('Status: ' . $code . ' ' . $text);
+    echo $text . "\n";
+    $GLOBALS['http_response_code'] = $code;
+    exit;
+  }
 
 	// Format file size
 	function FormatSize ($bytes) {
@@ -124,61 +98,89 @@
 		return ceil($bytes) . ' ' . $units[$pow];
 	}
 
-	// Rotating a two-dimensional array
-	function DiverseArray ($vector) {
-		$result = array();
-		foreach ($vector as $key1 => $value1) {
-			foreach ($value1 as $key2 => $value2) {
-				$result[$key2][$key1] = $value2;
-			}
-		}
-		return $result;
-	}
+  function normalize_files_array($files = []) {
+    $normalized_array = [];
+
+    foreach($files as $index => $file) {
+      if(!is_array($file['name'])) {
+        $normalized_array[$index][] = $file;
+        continue;
+      }
+
+      foreach($file['name'] as $idx => $name) {
+        $normalized_array[$index][$idx] = [
+          'name' => $name,
+          'type' => $file['type'][$idx],
+          'tmp_name' => $file['tmp_name'][$idx],
+          'error' => $file['error'][$idx],
+          'size' => $file['size'][$idx]
+        ];
+      }
+    }
+    return $normalized_array;
+  }
 
 	// Handling file upload
-	function UploadFile ($file_data) {
+	function UploadFile($file_data, $field_name) {
 		global $settings;
-		global $data;
-		global $_SESSION;
 
-		$file_data['uploaded_file_name'] = basename($file_data['name']);
-		$file_data['target_file_name'] = $file_data['uploaded_file_name'];
-		$file_data['upload_target_file'] = $data['uploaddir'] . DIRECTORY_SEPARATOR . $file_data['target_file_name'];
+    /*
+      Normalized data should look like this:
+        Array ( 
+          [file] => Array ( 
+            [0] => Array ( 
+              [name] => rainbowkilt.jpg 
+              [type] => image/jpeg 
+              [tmp_name] => /mnt/data/tmp/phpMpMGjd 
+              [error] => 0 
+              [size] => 108936 
+            ) 
+          ) 
+        )
+      idx increases if we have multiples in one upload.
+    */
+    foreach($file_data[$field_name] as $idx => $data) {
+      if($data['error'] != 0) {
+        httperr(500, 'Upload error: ' . $data['error']); 
+      }
+      
+      $filename = $data['name'];
+      
+      if(strpos($filename, '..') !== FALSE || strpos($filename, '/') !== FALSE) {
+        httperr(401, 'Invalid filename - no .. or / allowed.');
+      }
 
-		// Do now allow to overwriting files
-		if (file_exists($file_data['upload_target_file'])) {
-			echo 'File name already exists' . "\n";
-			return;
-		}
-		
-		$ext = pathinfo($file_data['upload_target_file'], PATHINFO_EXTENSION);
-		if(in_array($ext, $settings['badext'])) {
-		  $file_data['upload_target_file'] = $file_data['upload_target_file'] . '.txt';
-		  $file_data['target_file_name'] = $file_data['target_file_name'] . '.txt';
-		}
-
-		// Moving uploaded file OK
-		if (move_uploaded_file($file_data['tmp_name'], $file_data['upload_target_file'])) {
-			echo $settings['url'] .  $file_data['target_file_name'] . "\n";
-		} else {
-			echo 'Error: unable to upload the file.';
-		}
+      // Defang any bad extensions.
+      $ext = pathinfo($filename, PATHINFO_EXTENSION);
+  		if(in_array($ext, $settings['badext'])) {
+        $filename = $filename . '.txt';
+  		}
+      
+      $dest = $settings['uploaddir'] . DIRECTORY_SEPARATOR . $filename;
+      
+  		// Do now allow to overwriting files
+  		if(file_exists($dest)) {
+        httperr(401, 'File already exists');
+  		}
+      
+      if(!move_uploaded_file($data['tmp_name'], $dest)) {
+        $err = error_get_last();
+        httperr(500, 'Error uploading file: ' . $err['message']);
+      }
+      
+      echo "Received: $filename\n";
+    }
 	}
 
-	// Files are being POSTed. Uploading them one by one.
-	if($canupload && isset($_FILES['file'])) {
-		header('Content-type: text/plain');
-		if(is_array($_FILES['file'])) {
-			$file_array = DiverseArray($_FILES['file']);
-			foreach ($file_array as $file_data) {
-				UploadFile($file_data);
-			}
-		} else {
-			UploadFile($_FILES['file']);
-		}
-		exit;
-	}
-
+  // Normalize line endings to unix format  
+  function normalize($s) {
+    $s = str_replace("\r\n", "\n", $s);
+    $s = str_replace("\r", "\n", $s);
+    // Don't allow out-of-control blank lines
+    $s = preg_replace("/\n{2,}/", "\n\n", $s);
+    return $s;
+  }
+  
 	// List files in a given directory, excluding certain files
 	function ListFiles ($dir, $exclude) {
 		$file_array = array();
@@ -188,7 +190,8 @@
 		  if(in_array($filename, $exclude)) {
 		    continue;
 		  }
-	  	$fullname = $dir . $filename;
+      
+	  	$fullname = $dir . DIRECTORY_SEPARATOR . $filename;
 	    if(is_file($fullname)) {
 				$file_array[] = $filename;
 			} else {
@@ -199,8 +202,17 @@
 		sort($file_array);
 		return array_merge($dir_array, $file_array);
 	}
-?>
-<!DOCTYPE html>
+  
+	// Files are being POSTed. Uploading them one by one.
+	if($canupload && isset($_FILES['file'])) {
+		header('Content-type: text/plain');
+		UploadFile(normalize_files_array($_FILES), 'file');
+		exit;
+	}
+  
+  $file_array = ListFiles($settings['uploaddir'], $settings['ignores']);
+  
+?><!DOCTYPE html>
 <html>
 <head>
 	<link rel="stylesheet" href="/style.css"/>
@@ -248,9 +260,18 @@
   </div>
 
   <div id="content">
-    <h2>Files shared by others:</h2>
 	<?php
-	  $file_array = ListFiles($settings['uploaddir'], $data['ignores']);
+    $readme = $path . DIRECTORY_SEPARATOR . "readme.txt";
+    if(is_file($readme)) {
+      $txt = file_get_contents($readme, false, NULL, 0, 8192);
+      $txt = normalize($txt);
+      $txt = htmlentities($txt);
+      $txt = str_replace("\n", "<br/>", $txt);
+      echo '<div class="readme"><h2>About this directory:</h2>' . $txt . '</div>' . "\n";
+    } else {
+      echo '<h2>Files shared by others:</h2>';
+    }
+  
 	  if(count($file_array) == 0) {
 	    echo "<h2>Nothing shared yet!</h2>";
 	    if($canupload) {
@@ -259,14 +280,21 @@
 	  } else {
   		echo '<ul id="simpleupload-ul">';
   		foreach($file_array as $filename) {
-  		  if(substr($filename, -1) == '/') {
-  		    $fi = new FilesystemIterator($path . $filename, FilesystemIterator::SKIP_DOTS);
-  		    $info = '(' . iterator_count($fi) . ' files)';
+        $fullname = $path . DIRECTORY_SEPARATOR . $filename;
+        if($filename == '../') {
+          $info = ' (Parent Directory)';
+        } else if(substr($filename, -1) == '/') {
+          try {
+            $fi = new FilesystemIterator($fullname, FilesystemIterator::SKIP_DOTS);
+            $info = '(' . iterator_count($fi) . ' files)';
+          } catch(Exception $ex) {
+            $info = ' (Read error)';
+          }
   		  } else {
-  		    $info = FormatSize(filesize($path . $filename));
+  		    $info = ' - ' . FormatSize(filesize($fullname));
   		  }
   			echo '<li><a href="' . $urlpath . $filename . '">' . $filename . 
-  			  '</a> - ' . $info . '</li>';
+  			  '</a>' . $info . '</li>';
   		}
   		echo '</ul>';
 		}
@@ -290,59 +318,58 @@
       <input type="button" value="Upload File" onclick="uploadFile()"/><br/>
       <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
       <h3 id="status"></h3>
-			Maximum upload size: <?php echo $data['max_upload_size']; ?>
+			Maximum upload size: <?php echo $settings['max_upload_size']; ?>
 		</form>
     </div>
 
 		<script charset="utf-8" type="text/javascript">
-    /* Script written by Adam Khoury @ DevelopPHP.com */
-    /* Video Tutorial: http://www.youtube.com/watch?v=EraNFJiY0Eg */
+    /* Based on script written by Adam Khoury @ DevelopPHP.com */
     function _(el) {
     	return document.getElementById(el);
     }
+    
     function uploadFile() {
       _("progressBar").value = 0;
     	var file = _("file1").files[0];
-    	// alert(file.name+" | "+file.size+" | "+file.type);
     	var formdata = new FormData();
     	formdata.append("file[]", file);
-    	formdata.append("uploaddir", "<?= $data['uploaddir'] ?>");
+    	formdata.append("uploaddir", "<?= $settings['urlpath'] ?>");
     	var ajax = new XMLHttpRequest();
-    	ajax.upload.addEventListener("progress", progressHandler, false);
-    	ajax.addEventListener("load", completeHandler, false);
-    	ajax.addEventListener("error", errorHandler, false);
-    	ajax.addEventListener("abort", abortHandler, false);
-    	ajax.open("POST", "/<?= $data['scriptname'] ?>");
+    	ajax.upload.onprogress = function(event) {
+      	var percent = (event.loaded / event.total) * 100;
+      	_("progressBar").max = event.total;
+      	_("progressBar").value = event.loaded;
+      	if(percent >= 100) {
+      	  _("status").innerHTML = '<img src="/ball.gif" width="25" height="25"/>' + 
+      	    'Finishing upload.  Please wait... ';
+      	} else {
+      	  _("status").innerHTML = percent.toFixed(2) + "% uploaded... Please wait";
+    	  }
+    	};
+      
+      ajax.onreadystatechange = function(event) {
+        if(ajax.readyState == 4) {
+          if(ajax.status == 200) {
+            _("status").innerHTML = '<img src="/check.png" width="25" height="25"/>' + 
+        	    'Upload complete:<br/>' + ajax.responseText;
+              window.setTimeout(function() {location.reload();}, 3000);
+          } else {
+            _("status").innerHTML = '<img src="/error.png" width="25" height="25"/>' + 
+              'Error uploading:<br/>' + ajax.status + ' ' + ajax.statusText + ' : ' + ajax.responseText;
+          }
+        }
+      };
+
+    	ajax.open("POST", "/<?= $settings['scriptname'] ?>");
     	ajax.send(formdata);
-    }
-    
-    function progressHandler(event) {
-    	var percent = (event.loaded / event.total) * 100;
-    	_("progressBar").max = event.total;
-    	_("progressBar").value = event.loaded;
-    	if(percent >= 100) {
-    	  _("status").innerHTML = '<img src="/ball.gif" width="25" height="25"/>' + 
-    	    'Finishing upload.  Please wait... ';
-    	} else {
-    	  _("status").innerHTML = percent.toFixed(2) + "% uploaded... Please wait";
-  	  }
-    }
-    
-    function completeHandler(event) {
-    	_("status").innerHTML = '<img src="/check.png" width="25" height="25"/>' + 
-    	  'Upload complete: ' + event.target.responseText;
-    	window.setTimeout(function() {location.reload();}, 3000);
-    }
-    
-    function errorHandler(event) {
-    	_("status").innerHTML = "Upload Failed";
-    }
-    
-    function abortHandler(event) {
-    	_("status").innerHTML = "Upload Aborted";
     }
 		</script>
 		<?php } ?>
+    
+    <!-- Preload: -->
+    <img src="/ball.gif" width="1" height="1" style="opacity: 0.01;"/>
+    <img src="/check.png" width="1" height="1" style="opacity: 0.01;"/>
+    <img src="/error.png" width="1" height="1" style="opacity: 0.01;"/>
 </div>
 </body>
 </html>

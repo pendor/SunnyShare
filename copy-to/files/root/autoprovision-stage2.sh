@@ -36,6 +36,8 @@ installPackages() {
     mkdir /mnt/data/Shared /mnt/data/Shared/incoming
     ln -s /mnt/data/Shared /www/Shared
     touch /mnt/data/Shared/.noupload
+    mkdir -p /mnt/data/tmp
+    chown -R www:www /mnt/data/tmp /mnt/data/Shared
 }
 
 autoprovisionStage2()
