@@ -110,4 +110,4 @@ lighttpd-mod-rewrite
 zoneinfo-core
 zoneinfo-simple
 zoneinfo-northamerica
-
+rsync
