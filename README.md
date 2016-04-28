@@ -1,5 +1,7 @@
 # Sunny+Share
 
+![Sunny+Share Logo](https://raw.githubusercontent.com/pendor/SunnyShare/master/copy-to/files/www/logo.png)
+
 Sunny+Share is a sharing platform based on the concept of PirateBox and LibraryBox.  It uses a TP-Link based router to share & allow uploading of content over a local WiFi connection.
 
 ## Why a new project?
