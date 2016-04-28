@@ -14,7 +14,7 @@ A few reasons...
 
 ## What's this project do that PirateBox's build doesn't?
 
-Sunny+Share's build is very simple and has minimal dependencies on the build host because it does all the actual compiling in a VM.  You need Vagrant and VirtualBox installed.  Other than that, running `./build-it.sh pb.pkgs` should be enough to give you a firmware you can upload to a stock TP-Link router or `sysupgrade` on an existing OpenWRT-based install.
+Sunny+Share's build is very simple and has minimal dependencies on the build host because it does all the actual compiling in a VM.  You need Vagrant and VirtualBox installed.  Other than that, running `./build.sh` should be enough to give you a firmware you can upload to a stock TP-Link router or `sysupgrade` on an existing OpenWRT-based install.
 
 ## Licensing
 
