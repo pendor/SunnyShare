@@ -1,0 +1,93 @@
+/*********************************************************************************************************
+ This code is part of the ShoutBox software (www.gerd-tentler.de/tools/shoutbox), copyright by
+ Gerd Tentler. Obtain permission before selling this code or hosting it on a commercial website or
+ redistributing it over the Internet or in any other medium. In all cases copyright must remain intact.
+*********************************************************************************************************/
+
+A, A:active, A:visited {
+  color: #000000;
+  text-decoration: none;
+}
+A:hover {
+  color: #FF0000;
+  text-decoration: underline;
+}
+.cssShoutBox {
+  background-color: #FFFFFF;
+  border: 2px inset #EEEEEE;
+}
+.cssShoutForm {
+  font-family: Arial, Helvetica;
+  font-size: 11px;
+  background-color: #E0F0FF;
+  border: 2px inset #EEEEEE;
+}
+.cssShoutButton {
+  font-family: Arial, Helvetica;
+  font-size: 11px;
+}
+.cssShoutText {
+  font-family: Arial, Helvetica;
+  font-size: 11px;
+  color: #000000;
+}
+.cssShoutTextAdmin {
+  font-family: Arial, Helvetica;
+  font-size: 11px;
+	color: #D00000;
+}
+.cssShoutTime {
+  font-family: Arial, Helvetica;
+  font-size: 9px;
+  color: #A0A0A0;
+  text-align: right;
+}
+.cssShoutRaised {
+  background-color: #FFFFC0;
+  border: 1px outset #EEEEEE;
+  width: 14px;
+  height: 14px;
+  padding: 2px;
+  text-align: center;
+}
+.cssShoutPressed {
+  background-color: #FFFFC0;
+  border: 1px inset #EEEEEE;
+  width: 14px;
+  height: 14px;
+  padding-left: 3px;
+  padding-top: 3px;
+  padding-right: 1px;
+  padding-bottom: 1px;
+  text-align: center;
+}
+.cssShoutError {
+  font-family: Arial, Helvetica;
+  font-size: 11px;
+  padding: 4px;
+  text-align: center;
+  color: #D00000;
+  background-color: #FFF0E0;
+  border: 1px solid #C0B0A0;
+}
+.cssCode {
+  font-family: Courier New, Courier, Monospace;
+  font-size: 12px;
+  color: #00A000;
+  background-color: #E0FFE0;
+  border: 1px solid #C0E0C0;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding: 4px;
+}
+.cssQuote {
+  color: #808080;
+  background-color: #F0F0F0;
+  border: 1px solid #C0C0C0;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding: 4px;
+}
+.cssSpr {
+  display: none;
+}

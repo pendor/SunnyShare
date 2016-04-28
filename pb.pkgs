@@ -1,0 +1,113 @@
+# kmod-fs-hfs
+# kmod-fs-hfsplus
+# kmod-fs-ntfs
+# kmod-ip6tables
+# kmod-ipv6
+# libiwinfo-lua
+# liblua
+# libubus-lua
+# libuci-lua
+# lua
+# luci
+# luci-app-firewall
+# luci-base
+# luci-lib-ip
+# luci-lib-nixio
+# luci-mod-admin-full
+# luci-theme-bootstrap
+# uhttpd-mod-ubus
+-ppp
+-ppp-mod-pppoe
+base-files
+badblocks
+blkid
+block-mount
+busybox
+dnsmasq
+dropbear
+e2fsprogs
+fdisk
+fstools
+hostapd-mini
+hostapd-utils
+# hostap-utils
+iw
+iwinfo
+kernel
+kmod-ata-ahci
+kmod-ata-core
+kmod-ata-marvell-sata
+kmod-ata-nvidia-sata
+kmod-ata-via-sata
+kmod-ath
+kmod-ath9k
+kmod-ath9k-common
+kmod-cfg80211
+kmod-fs-ext4
+kmod-fs-msdos
+kmod-fs-vfat
+kmod-gpio-button-hotplug
+kmod-ipt-nat
+kmod-leds-gpio
+kmod-ledtrig-default-on
+kmod-ledtrig-netdev
+kmod-ledtrig-timer
+kmod-ledtrig-usbdev
+kmod-lib-crc16
+kmod-loop
+kmod-mac80211
+kmod-mmc
+kmod-nls-cp437
+kmod-nls-cp850
+kmod-nls-iso8859-1
+kmod-nls-iso8859-15
+kmod-nls-utf8
+kmod-scsi-core
+kmod-scsi-generic
+kmod-slhc
+kmod-usb-core
+kmod-usb-ohci
+kmod-usb-ohci-pci
+kmod-usb-storage
+kmod-usb-storage-extras
+kmod-usb-uhci
+kmod-usb2
+kmod-usb2-pci
+kmod-usb3
+libc
+libgcc
+losetup
+mount-utils
+mountd
+mdns
+mtd
+netifd
+odhcpd
+opkg
+rpcd
+swap-utils
+swconfig
+uboot-envtools
+# ubox
+# ubus
+# ubusd
+uci
+# usbutils
+# usbreset
+# usb-modeswitch
+wireless-tools
+zlib
+php5
+php5-cgi
+php5-mod-session
+php5-mod-sqlite3
+lighttpd
+lighttpd-mod-access
+lighttpd-mod-auth
+lighttpd-mod-cgi
+lighttpd-mod-redirect
+lighttpd-mod-rewrite
+zoneinfo-core
+zoneinfo-simple
+zoneinfo-northamerica
+
