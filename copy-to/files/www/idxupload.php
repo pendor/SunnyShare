@@ -53,29 +53,24 @@
   
   $canupload = !is_file($path . '/.noupload');
 
-  $ignores = array( '.', 'LICENSE', 'README.md', 'README.txt', 'readme.txt', '.noupload',
-    pathinfo(__FILE__, PATHINFO_BASENAME) );
-
-  // Omit .. if in one of the roots already
-  if(in_array($urlPath, $allowedUploadRoots)) {
-    $ignores[] = '..';
-  } 
-
 	$settings = array(
-		// Directory to store uploaded files
 		'uploaddir'         => $path,
     'urlpath'           => $urlPath,
-
-		// Complete URL to your directory
-		'url'               => 'http://sunnyshare.lan/' . $urlpath,
-
-		// Files that will be ignored
-		'ignores'           => $ignores,
-		'badext'            => array( 'php', 'php3', 'php4', 'php5', 'pl', 'cgi', 'sh', 'noupload' ),
-
-	  'scriptname'        => pathinfo(__FILE__, PATHINFO_BASENAME),
-	  'max_upload_size'   => ini_get('upload_max_filesize'),
+		'ignores'           => array( 
+      '.', 'LICENSE', 'README.md', 'README.txt', 
+      'readme.txt', '.noupload',
+      pathinfo(__FILE__, PATHINFO_BASENAME) 
+    ),
+		'badext'            => array( 
+      'php', 'php3', 'php4', 'php5', 'pl', 
+      'cgi', 'sh', 'noupload' 
+    ),
   );
+  
+  // Omit .. if in one of the roots already
+  if(in_array($urlPath, $allowedUploadRoots)) {
+    $settings['ignores'][] = '..';
+  } 
 
   function httperr($code, $text) {
     // Special handling for CGI:
@@ -85,8 +80,7 @@
     exit;
   }
 
-	// Format file size
-	function FormatSize ($bytes) {
+	function FormatSize($bytes) {
 		$units = array('B', 'KB', 'MB', 'GB', 'TB');
 
 		$bytes = max($bytes, 0);
@@ -182,7 +176,7 @@
   }
   
 	// List files in a given directory, excluding certain files
-	function ListFiles ($dir, $exclude) {
+	function ListFiles($dir, $exclude) {
 		$file_array = array();
 		$dir_array = array();
 		$dh = opendir($dir);
@@ -216,38 +210,6 @@
 <html>
 <head>
 	<link rel="stylesheet" href="/style.css"/>
-		<style media="screen">
-			body ul li form {
-				display: inline-block;
-				padding: 0;
-				margin: 0;
-			}
-
-			li.owned {
-				margin: 8px;
-			}
-
-			body ul li form button {
-				opacity: 0.5;
-				display: inline-block;
-				padding: 4px 16px;
-				margin: 0;
-				border: 0;
-			}
-
-			li.uploading {
-				animation: upanim 1s linear 0s infinite alternate;
-			}
-
-			@keyframes upanim {
-				from {
-					opacity: 0.1;
-				}
-				to {
-					opacity: 0.7;
-				}
-			}
-		</style>
 	<title>Sunny+Share - Share Freely!</title>
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
 </head>
@@ -272,13 +234,13 @@
       echo '<h2>Files shared by others:</h2>';
     }
   
-	  if(count($file_array) == 0) {
+	  if(!count($file_array)) {
 	    echo "<h2>Nothing shared yet!</h2>";
 	    if($canupload) {
 	      echo "<p>Why not be the first?</p>";
       }
 	  } else {
-  		echo '<ul id="simpleupload-ul">';
+  		echo '<ul>';
   		foreach($file_array as $filename) {
         $fullname = $path . DIRECTORY_SEPARATOR . $filename;
         if($filename == '../') {
@@ -307,69 +269,68 @@
 		      might find interesting.</p>
 	    </div>
 	<?php } else { ?>
-		<div class="box" id="dropzone">
-		<h2>Share your files:</h2>
-		<form method="post" enctype="multipart/form-data" id="upload_form">
-			<p>Choose files you wish to share.  Files can only be removed by this box's owner.
-        Uploaded files will be viewable by anyone in WiFi range.  Inappropriate 
-      uploads will be removed, and you should feel ashamed of yourself!</p>
+		<div class="box">
+  		<h2>Share your files:</h2>
+  		<form method="post" enctype="multipart/form-data" id="upload_form">
+  			<p>Choose files you wish to share.  Files can only be removed by this box's owner.
+          Uploaded files will be viewable by anyone in WiFi range.  Inappropriate 
+          uploads will be removed, and you should feel ashamed of yourself!</p>
       
-      <input type="file" name="file[]" id="file1"/>
-      <input type="button" value="Upload File" onclick="uploadFile()"/><br/>
-      <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
-      <h3 id="status"></h3>
-			Maximum upload size: <?php echo $settings['max_upload_size']; ?>
-		</form>
+        <input type="file" name="file[]" id="file1"/>
+        <input type="button" value="Upload File" onclick="uploadFile()"/><br/>
+        Maximum upload size: <?= ini_get('upload_max_filesize') ?><br/>
+        <progress id="progressBar" value="0" style="width:280px;"></progress>
+        <h3 id="status"></h3>
+  		</form>
     </div>
 
-		<script charset="utf-8" type="text/javascript">
-    /* Based on script written by Adam Khoury @ DevelopPHP.com */
-    function _(el) {
-    	return document.getElementById(el);
-    }
-    
-    function uploadFile() {
-      _("progressBar").value = 0;
-    	var file = _("file1").files[0];
-    	var formdata = new FormData();
-    	formdata.append("file[]", file);
-    	formdata.append("uploaddir", "<?= $settings['urlpath'] ?>");
-    	var ajax = new XMLHttpRequest();
-    	ajax.upload.onprogress = function(event) {
-      	var percent = (event.loaded / event.total) * 100;
-      	_("progressBar").max = event.total;
-      	_("progressBar").value = event.loaded;
-      	if(percent >= 100) {
-      	  _("status").innerHTML = '<img src="/ball.gif" width="25" height="25"/>' + 
-      	    'Finishing upload.  Please wait... ';
-      	} else {
-      	  _("status").innerHTML = percent.toFixed(2) + "% uploaded... Please wait";
-    	  }
-    	};
-      
-      ajax.onreadystatechange = function(event) {
-        if(ajax.readyState == 4) {
-          if(ajax.status == 200) {
-            _("status").innerHTML = '<img src="/check.png" width="25" height="25"/>' + 
-        	    'Upload complete:<br/>' + ajax.responseText;
-              window.setTimeout(function() {location.reload();}, 3000);
-          } else {
-            _("status").innerHTML = '<img src="/error.png" width="25" height="25"/>' + 
-              'Error uploading:<br/>' + ajax.status + ' ' + ajax.statusText + ' : ' + ajax.responseText;
-          }
-        }
-      };
+<script charset="utf-8" type="text/javascript">
+function uploadFile() {
+  var prog = document.getElementById("progressBar");
+  var status = document.getElementById("status");
+	var file = document.getElementById("file1").files[0];
 
-    	ajax.open("POST", "/<?= $settings['scriptname'] ?>");
-    	ajax.send(formdata);
+  prog.value = 0;
+	var ajax = new XMLHttpRequest();
+	ajax.upload.onprogress = function(event) {
+  	var percent = (event.loaded / event.total) * 100;
+  	prog.max = event.total;
+  	prog.value = event.loaded;
+  	if(percent >= 100) {
+  	  status.innerHTML = '<img src="/ball.gif" width="25" height="25"/> ' + 
+  	    'Finishing upload.  Please wait...';
+  	} else {
+  	  status.innerHTML = percent.toFixed(2) + "% uploaded...";
+	  }
+	};
+  
+  ajax.onreadystatechange = function(event) {
+    if(ajax.readyState == 4) {
+      if(ajax.status == 200) {
+        status.innerHTML = '<img src="/check.png" width="25" height="25"/> ' + 
+    	    'Upload complete:<br/>' + ajax.responseText;
+        window.setTimeout(function() {location.reload();}, 1500);
+      } else {
+        status.innerHTML = '<img src="/error.png" width="25" height="25"/> ' + 
+          'Error uploading:<br/>' + ajax.status + ' ' + ajax.statusText + ' : ' + ajax.responseText;
+      }
     }
-		</script>
+  };
+
+	ajax.open("POST", "/<?= pathinfo(__FILE__, PATHINFO_BASENAME) ?>");
+  
+	var formdata = new FormData();
+	formdata.append("uploaddir", "<?= $settings['urlpath'] ?>");
+	formdata.append("file[]", file);
+  
+	ajax.send(formdata);
+}
+</script>
 		<?php } ?>
-    
-    <!-- Preload: -->
-    <img src="/ball.gif" width="1" height="1" style="opacity: 0.01;"/>
-    <img src="/check.png" width="1" height="1" style="opacity: 0.01;"/>
-    <img src="/error.png" width="1" height="1" style="opacity: 0.01;"/>
 </div>
+<!-- Preload: -->
+<img src="/ball.gif" width="1" height="1" style="opacity: 0.01;"/>
+<img src="/check.png" width="1" height="1" style="opacity: 0.01;"/>
+<img src="/error.png" width="1" height="1" style="opacity: 0.01;"/>
 </body>
 </html>
