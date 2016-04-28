@@ -1,6 +1,6 @@
 Vagrant.configure(2) do |config|
   config.vm.box = "ubuntu/trusty64"
-  config.vm.boot_timeout = 1000
+  config.vm.boot_timeout = 10000
 
   config.vm.synced_folder "firmware", "/openwrt_firmware"
   config.vm.synced_folder "copy-to", "/openwrt_files"
