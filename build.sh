@@ -45,6 +45,7 @@ vagrant ssh -c "\
   cd ${BUILD_DIR} && \
   rm -rf files && \
   cp -r /openwrt_files/* . && \
+  ( patch -p0 -N --dry-run -i Makefile.patch && patch -p0 -N -i  Makefile.patch ) ;  \
   make image PROFILE=${PROFILE} PACKAGES=\"${PKGS}\" FILES=files && \
   cp -r bin/* /openwrt_firmware \
   "
