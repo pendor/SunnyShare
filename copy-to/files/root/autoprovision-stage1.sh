@@ -1,51 +1,55 @@
 #!/bin/sh
 
-# autoprovision stage 1: this script will be executed upon boot without a valid extroot (i.e. when rc.local is found and run from the internal overlay)
+# make sure that installed packages take precedence over busybox. 
+# see https://dev.openwrt.org/ticket/18523
+export PATH="/usr/bin:/usr/sbin:/bin:/sbin"
 
-. /root/autoprovision-functions.sh
+# Must match /etc/config/fstab
+export rootUUID=05d615b3-bef8-460c-9a23-52db8d09e000
+export dataUUID=05d615b3-bef8-460c-9a23-52db8d09e001
+export swapUUID=05d615b3-bef8-460c-9a23-52db8d09e002
 
-getPendriveSize()
-{
-    # this is needed for the mmc card in some (all?) Huawei 3G dongle.
-    # details: https://dev.openwrt.org/ticket/10716#comment:4
-    if [ -e /dev/sda ]; then
-        # force re-read of the partition table
-        head -c 1024 /dev/sda >/dev/null
-    fi
-
-    if (grep -q sda /proc/partitions) then
-        cat /sys/block/sda/size
-    else
-        echo 0
-    fi
+log() {
+  /usr/bin/logger -t autoprov -s $*
 }
 
-hasBigEnoughPendrive()
-{
-    local size=$(getPendriveSize)
-    if [ $size -ge 600000 ]; then
-        log "Found a pendrive of size: $(($size / 2 / 1024)) MB"
-        return 0
-    else
-        return 1
-    fi
+getPendriveSize() {
+  if (grep -q sda /proc/partitions) then
+    cat /sys/block/sda/size
+  else
+    echo 0
+  fi
 }
 
-setupPendrivePartitions()
-{
-    # erase partition table
-    dd if=/dev/zero of=/dev/sda bs=1M count=1
+hasBigEnoughPendrive() {
+  local size=$(getPendriveSize)
+  if [ $size -ge 600000 ]; then
+    log "Found a pendrive of size: $(($size / 2 / 1024)) MB"
+    return 0
+  else
+    return 1
+  fi
+}
 
-    # sda1 is 'swap'
-    # sda2 is 'root'
-    # sda3 is 'data'
-    fdisk /dev/sda <<EOF
+makeParitions() {
+  # Automount causes misery for us...
+  /etc/init.d/mountd stop
+  umount /dev/sda3 /dev/sda2 /dev/sda1
+  swapoff /dev/sda1
+
+  # erase partition table
+  dd if=/dev/zero of=/dev/sda bs=1M count=1
+
+  # sda1 is 'swap'
+  # sda2 is 'root'
+  # sda3 is 'data'
+  fdisk /dev/sda <<EOF
 o
 n
 p
 1
 
-+64M
++256M
 n
 p
 2
@@ -62,77 +66,96 @@ t
 w
 q
 EOF
-    log "Finished partitioning /dev/sda using fdisk"
+  log "Finished partitioning /dev/sda using fdisk"
 
-    sleep 2
+  sleep 2
+  until [ -e /dev/sda1 ] ; do
+      echo "Waiting for partitions to show up in /dev"
+      sleep 1
+  done
 
-    until [ -e /dev/sda1 ]
-    do
-        echo "Waiting for partitions to show up in /dev"
-        sleep 1
-    done
+  mkswap -L swap -U $swapUUID /dev/sda1
+  mkfs.ext4 -L root -U $rootUUID /dev/sda2
+  mkfs.ext4 -L data -U $dataUUID /dev/sda3
+  sleep 1
 
-    mkswap -L swap -U $swapUUID /dev/sda1
-    mkfs.ext4 -L root -U $rootUUID /dev/sda2
-    mkfs.ext4 -L data -U $dataUUID /dev/sda3
+  mkdir -p /overlaynew
+  mount -U $rootUUID /overlaynew
+  mkdir -p /overlaynew/upper /overlaynew/work /overlaynew/upper/mnt/data
+  tar -c -C /overlay . | tar -x -C /overlaynew
 
-    log "Finished setting up filesystems"
-}
+  mkdir -p /mnt/data /overlaynew/upper/mnt/data
+  mount -U $dataUUID /mnt/data
 
-setupExtroot()
-{
-    mkdir -p /mnt/extroot/
-    mount -U $rootUUID /mnt/extroot
-
-    overlay_root=/mnt/extroot/upper
-
-    # at this point we could copy the entire root (a previous version of this script did that), or just the overlay from the flash,
-    # but it seems to work fine if we just create an empty overlay that is only replacing the rc.local from the firmware.
-
-    # let's write a new rc.local on the extroot that will shadow the one which is in the rom (to run stage2 instead of stage1)
-    mkdir -p ${overlay_root}/etc/
-    cat >${overlay_root}/etc/rc.local <<EOF
-/root/autoprovision-stage2.sh
-exit 0
+  # write a new rc.local on the overlay that will shadow the one in rom 
+  mkdir -p /overlaynew/upper/etc/
+  cat > /overlaynew/upper/etc/rc.local <<EOF
+# Provisioning Done.
 EOF
 
-    # TODO FIXME when this below is enabled then Chaos Calmer doesn't turn on the network and the device remains unreachable
+  mkdir -p \
+    /mnt/data/Shared \
+    /mnt/data/Shared/incoming \
+    /mnt/data/minidlna/db \
+    /mnt/data/tmp \
+    /overlaynew/upper/www
 
-    # make sure that we shadow the /var -> /tmp symlink in the new extroot, so that /var becomes persistent across reboots.
-#    mkdir -p ${overlay_root}/var
-    # KLUDGE: /var/state is assumed to be transient, so link it to tmp, see https://dev.openwrt.org/ticket/12228
-#    cd ${overlay_root}/var
-#    ln -s /tmp state
-#    cd -
+  touch /mnt/data/Shared/.noupload /overlaynew/upper/www/.noupload
+  ln -s /mnt/data/Shared /overlaynew/upper/www/Shared
 
-    log "Finished setting up extroot"
+  cat > /mnt/data/Shared/incoming/readme.txt <<EOF
+Feel free to upload any assorted stuff to share in this directory.
+
+Be nice, or your stuff will get deleted. =)
+EOF
+
+  chown -R www:www /mnt/data/tmp /mnt/data/Shared
+  chown -R minidlna:www /mnt/data/minidlna/
+
+  mkdir -p \
+    /overlaynew/upper/var/log/archive \
+    /overlaynew/upper/var/lib \
+    /overlaynew/upper/var/spool/cron/crontabs
+
+  cat > /overlaynew/upper/var/spool/cron/crontabs/root <<EOF
+0 0 * * * /usr/sbin/logrotate /etc/logrotate.conf
+EOF
+
+# Remove bad .extroot-uuid maybe?
+  rm -rf /overlaynew/etc /overlaynew/.fs_state
+  touch /mnt/data/.provdone
 }
 
-autoprovisionStage1()
-{
-    signalAutoprovisionWorking
+#############################################
 
-    signalAutoprovisionWaitingForUser
-    signalWaitingForPendrive
+if [ -f /mnt/data/.provdone ] ; then
+  log "Provisioning already done."
+else 
+  log "Provisioning required."
 
-    until hasBigEnoughPendrive
-    do
-        echo "Waiting for a pendrive to be inserted"
-        sleep 3
-    done
+  if [ -f /lib/ar71xx.sh ]; then
+     . /lib/ar71xx.sh
+  fi
 
-    signalAutoprovisionWorking # to make it flash in sync with the USB led
-    signalFormatting
+  until hasBigEnoughPendrive ; do
+    echo "Waiting for a pendrive to be inserted"
+    sleep 3
+  done
 
-    sleep 1
-
-    setupPendrivePartitions
-    sleep 1
-    setupExtroot
-
+  if [ ! -e /dev/sda3 ] ; then 
+    log "No sda3.  Partitioning..."
+    makeParitions
     sync
-    stopSignallingAnything
+  
+    log "Rebooting..."
+  
+    umount /dev/sda3
+    umount /dev/sda2
+    rmdir /overlaynew
+    sync
+  
     reboot
-}
-
-autoprovisionStage1
+  else
+    log "sda3 exists but no provisioning file.  Insert a better stick?"
+  fi
+fi
