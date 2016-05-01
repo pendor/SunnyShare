@@ -16,7 +16,8 @@ Vagrant.configure(2) do |config|
 # release: https://downloads.openwrt.org/chaos_calmer/15.05.1/ar71xx/generic/OpenWrt-ImageBuilder-15.05.1-ar71xx-generic.Linux-x86_64.tar.bz2
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update -q
-     apt-get install -q -y zip make gcc joe subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc python
+     apt-get install -q -y zip make gcc joe subversion build-essential libncurses5-dev zlib1g-dev gawk git ccache gettext libssl-dev xsltproc python 
+     apt-get install -q -y firmware-b43-installer b43-fwcutter firmware-b43legacy-installer
      echo "Provisioning script done."
   SHELL
 end

@@ -46,6 +46,8 @@ OUT="${BUILD_DIR}/bin/${ARCH}/openwrt-${REL_TAG}${ARCH}-${SUB_ARCH}${FW_PROFILE}
 IB_URL="https://downloads.openwrt.org/${REL_DIR}/${ARCH}/${SUB_ARCH}/${BUILD_DIR}.tar.bz2"
 SDK_URL="https://downloads.openwrt.org/${REL_DIR}/${ARCH}/${SUB_ARCH}/${SDK_DIR}.tar.bz2"
 
+MAKE_OPTS="-j5"
+
 # Where we'll drop the finished firmware on the host system
 LOCAL_FW=./firmware
 
@@ -81,3 +83,6 @@ function checkDir() {
     vagrant ssh -c "tar -xf /openwrt_dl/${TARBALL}" || ( echo "Extract failed" && exit 1 )
   fi
 }
+
+# Needed or Vagrant dies on start.
+mkdir -p dl

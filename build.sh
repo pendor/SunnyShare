@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 PKG_FILE="$1"
 
 if [ -z $PKG_FILE ] ; then
