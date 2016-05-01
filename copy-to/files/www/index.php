@@ -34,7 +34,7 @@
   		<div id="shoutbox">
   		  <h2>Chat with others near-by in real time:</h2>
   			<noscript><h2>Sorry, but chat won't work without JavaScript enabled.</h2></noscript>
-  			<?php include("shoutbox/shoutbox.inc.php"); ?>
+        <?php include("shoutbox/index.php"); ?>
   		</div>
   </div>
 </body>
