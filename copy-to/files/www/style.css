@@ -122,3 +122,6 @@ a#logo {
   display: block;
 }
 
+.grid-item {
+  width: 280px;
+}

@@ -1,4 +1,4 @@
-<?php if(!session_id()) session_start(); ?><!DOCTYPE html>
+<?php include("shout.php"); ?><!DOCTYPE html>
 <html>
 <head>
 	<link rel="stylesheet" href="/style.css"/>
@@ -31,11 +31,14 @@
       
     <p>For more information about this service, see <a href="/about.html">About Sunny+Share</a></p>
 	  </div>
-  		<div id="shoutbox">
-  		  <h2>Chat with others near-by in real time:</h2>
-  			<noscript><h2>Sorry, but chat won't work without JavaScript enabled.</h2></noscript>
-        <?php include("shoutbox/index.php"); ?>
-  		</div>
+		<div id="shoutbox">
+		  <h2>Chat with others near-by in real time:</h2>
+			<noscript><h2>Sorry, but chat won't work without JavaScript enabled.</h2></noscript>
+      <?php 
+      drawChatBox();
+      drawChatForm();
+      ?>
+		</div>
   </div>
 </body>
 </html>
