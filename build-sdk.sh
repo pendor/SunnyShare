@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 PKG_FILE="$1"
 
 if [ -z $PKG_FILE ] ; then
@@ -28,10 +30,11 @@ space "SDK looks good.  Let's try to build..."
 find copy-to -name .DS_Store -delete
 vagrant ssh -c "\
   cd ${SDK_DIR} && \
-  /openwrt_files/patch.sh sdk && \
+  cp /openwrt_files/sdk-dot-config .config && \
   ./scripts/feeds update -a && \
   ./scripts/feeds install ${PKGS_ADD} && \
-  make defconfig
+  /openwrt_files/patch.sh sdk && \
+  make ${MAKE_OPTS} world
 "
   # rm -rf files && \
   # cp -r /openwrt_files/* . && \

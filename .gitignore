@@ -2,3 +2,4 @@ firmware
 *-console.log
 .vagrant
 dl
+.DS_Store
