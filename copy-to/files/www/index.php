@@ -8,8 +8,8 @@
 <body>
   <div id="header">
 		<a id="logo" href="/"><img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/></a>
-		<a href="/" class="current">Home</a> &bul;
-		<a href="/Shared/">Library</a> &bul;
+		<a href="/" class="current">Home</a> &bull;
+		<a href="/Shared/">Library</a> &bull;
 		<a href="/about.html">About</a> 
   </div>
 

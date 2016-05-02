@@ -43,8 +43,9 @@ function relDate($date) {
 }
 
 if(isset($_POST['message'])) {
-  $message = $_POST['message'];
-  $name = $_POST['name'];
+  $message = trim($_POST['message']);
+  $name = trim($_POST['name']);
+  
   if(strlen($name) && strlen($message)) {
     if(strlen($message) > $maxLen) {
     	$message = substr($message, 0, $maxLen);
@@ -103,7 +104,7 @@ if(isset($_POST['message'])) {
 
   function drawChatBox() {
 ?>
-<script src="masonry.pkgd.min.js"></script>
+<script src="combo.js"></script>
 <div class="grid" id="chat"></div>
 
 <script type="text/javascript">
@@ -111,8 +112,8 @@ function postMessage() {
   var ajax = new XMLHttpRequest();
   ajax.onreadystatechange = function() {
     if(ajax.readyState == 4 && ajax.status == 200) {
-      drawChat(JSON.parse(ajax.responseText));
       document.getElementById('message').value = '';
+      drawChat(JSON.parse(ajax.responseText));
     }
   }
   
@@ -127,22 +128,28 @@ function fetchChat() {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function() {
     if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-      var myArr = JSON.parse(xmlhttp.responseText);
-      drawChat(myArr);
+      drawChat(JSON.parse(xmlhttp.responseText));
     }
   };
-  xmlhttp.open("GET", "/<?= pathinfo(__FILE__, PATHINFO_BASENAME) ?>?json=1");
+  xmlhttp.open("GET", "/<?= pathinfo($dataFile, PATHINFO_BASENAME) ?>?" + getTime());
   xmlhttp.send();
 }
-
-
 
 function drawChat(arr) {
   var out = "";
   for(var i = arr.length - 1; i >= 0 ; i--) {
+    var relTime = moment.unix(arr[i].t).fromNow();
+    var msg;
+    if(arr[i].p == '1') {
+      msg = arr[i].n;
+    } else {
+      msg = htmlEntities(arr[i].n);
+    }
+    
     out += '<div class="grid-item chatbox" style="background-color: ' + arr[i].c + '">' + 
-    '<b>' + htmlEntities(arr[i].n) + '</b>: ' +
-      htmlEntities(arr[i].m) + ' -- ' + arr[i].t + '</div>';    
+      '<span class="chat-name">' + msg + '</span>: ' +
+      htmlEntities(arr[i].m) + 
+      '<span class="chat-time">' + relTime + '</span></div>';    
     }
     document.getElementById("chat").innerHTML = out;
     
@@ -158,7 +165,7 @@ function htmlEntities(str) {
 }
 
 fetchChat();
-
+window.setInterval(fetchChat, 5000);
 </script>
 
 <?php } 
@@ -167,8 +174,8 @@ function drawChatForm() {
 ?>
 <form name="inpform" method="post" onsubmit="postMessage(); return false;">
 <b>Nickname:</b> 
-<input name="name" id="name" type="text" value="<?= isset($_COOKIE['name_chat']) ? $_COOKIE['name_chat'] : '' ?>" size="18" />
-<input type="text" id="message" name="message" placeholder="Type your message here" size="80"/>
+<input name="name" id="name" type="text" value="<?= isset($_COOKIE['name_chat']) ? $_COOKIE['name_chat'] : '' ?>" size="15" /><br/>
+<input type="text" id="message" name="message" placeholder="Type your message here" size="40"/>
 <input type="submit" value="Post" />
 </form> 
 <?php } ?>

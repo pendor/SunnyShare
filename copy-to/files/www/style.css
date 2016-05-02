@@ -146,3 +146,16 @@ a#logo {
   margin: 2em;
   min-height: 180px;
 }
+
+.chat-time::before {
+  content: " -- ";
+}
+
+.chat-time {
+  font-style: italic;
+  font-size: 70%;
+}
+
+.chat-name {
+  font-weight: bold;
+}
