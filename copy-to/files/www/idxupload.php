@@ -255,7 +255,7 @@
   		  } else {
   		    $info = ' - ' . FormatSize(filesize($fullname));
   		  }
-  			echo '<li><a href="' . $urlpath . $filename . '">' . $filename . 
+  			echo '<li><a href="' . $filename . '">' . $filename . 
   			  '</a>' . $info . '</li>';
   		}
   		echo '</ul>';

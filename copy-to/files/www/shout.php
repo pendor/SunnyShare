@@ -3,6 +3,8 @@ if(!session_id()) session_start();
 
 $maxLen = "512";
 $dataFile = "chat.json";
+$colors = array('#FFFFA5', '#E69D36', '#58C3EC', 
+  '#B68CC2', '#C9DF6F', '#EEA1BC', '#87EBEE');
 
 function relDate($date) {
   $now = time();
@@ -68,6 +70,7 @@ if(isset($_POST['message'])) {
         't' => $time,
         'n' => $name,
         'm' => $message,
+        'c' => $colors[array_rand($colors)],
       );
       ftruncate($fp, 0);
       rewind($fp);
@@ -109,11 +112,9 @@ function postMessage() {
   ajax.onreadystatechange = function() {
     if(ajax.readyState == 4 && ajax.status == 200) {
       drawChat(JSON.parse(ajax.responseText));
-      document.getElementById('name').value = '';
       document.getElementById('message').value = '';
     }
   }
-  
   
 	ajax.open("POST", "/<?= pathinfo(__FILE__, PATHINFO_BASENAME) ?>");
 	var formdata = new FormData();
@@ -134,17 +135,19 @@ function fetchChat() {
   xmlhttp.send();
 }
 
+
+
 function drawChat(arr) {
   var out = "";
-  for(var i = 0; i < arr.length; i++) {
-    out += '<div class="grid-item box"><b>' + htmlEntities(arr[i].n) + '</b>: ' +
+  for(var i = arr.length - 1; i >= 0 ; i--) {
+    out += '<div class="grid-item chatbox" style="background-color: ' + arr[i].c + '">' + 
+    '<b>' + htmlEntities(arr[i].n) + '</b>: ' +
       htmlEntities(arr[i].m) + ' -- ' + arr[i].t + '</div>';    
     }
     document.getElementById("chat").innerHTML = out;
     
   var msnry = new Masonry( '.grid', {
     itemSelector: '.grid-item',
-
   });
 }
 
@@ -163,18 +166,9 @@ fetchChat();
 function drawChatForm() {
 ?>
 <form name="inpform" method="post" onsubmit="postMessage(); return false;">
-<table width="98%">
-  <tr>
-    <td>Name :</td>
-    <td><input name="name" id="name" type="text" value="<?= isset($_COOKIE['name_chat']) ? $_COOKIE['name_chat'] : '' ?>" size="25" />
-    </td>
-  </tr>
-
-  <tr><td colspan="2">Message :</td></tr>
-  <tr>
-    <td colspan="2"><textarea id="message" name="message" cols="60" rows="2"></textarea></td>
-  </tr>
-  <tr align="center"><td colspan="2"><input type="submit" value="Send" /></td></tr>
-</table>
+<b>Nickname:</b> 
+<input name="name" id="name" type="text" value="<?= isset($_COOKIE['name_chat']) ? $_COOKIE['name_chat'] : '' ?>" size="18" />
+<input type="text" id="message" name="message" placeholder="Type your message here" size="80"/>
+<input type="submit" value="Post" />
 </form> 
 <?php } ?>

@@ -125,3 +125,24 @@ a#logo {
 .grid-item {
   width: 280px;
 }
+
+.hideable {
+ display:block;
+ transition: all 1s ease-out;
+}
+
+
+.chatbox {
+  -webkit-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
+  -moz-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
+  box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
+  
+  border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border: 2px solid #000000;
+  background-color: #FEEB5C;
+  padding: .5em;
+  margin: 2em;
+  min-height: 180px;
+}

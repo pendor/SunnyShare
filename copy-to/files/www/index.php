@@ -14,7 +14,7 @@
   </div>
 
   <div id="content">
-    <div class="box">
+    <div class="box hideable">
     <h1>Welcome!</h1>
     
     <p>You've discovered a Sunny+Share box placed near-by by someone who
@@ -30,13 +30,14 @@
       or unlawful content will be removed.</p>
       
     <p>For more information about this service, see <a href="/about.html">About Sunny+Share</a></p>
+    <a href="#" onclick="this.parentNode.style.display = 'none'">Hide this message</a>
 	  </div>
 		<div id="shoutbox">
 		  <h2>Chat with others near-by in real time:</h2>
 			<noscript><h2>Sorry, but chat won't work without JavaScript enabled.</h2></noscript>
       <?php 
-      drawChatBox();
       drawChatForm();
+      drawChatBox();
       ?>
 		</div>
   </div>
