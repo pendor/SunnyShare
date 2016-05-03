@@ -2,5 +2,5 @@ firmware
 *-console.log
 .vagrant
 dl
-copy-to/files/www/combo.js
+www/combo.js
 .DS_Store
