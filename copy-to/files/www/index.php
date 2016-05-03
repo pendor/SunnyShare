@@ -4,6 +4,7 @@
 	<link rel="stylesheet" href="/style.css"/>
 	<title>Sunny+Share - Share Freely!</title>
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
+  <script src="combo.js" type="text/javascript"></script>
 </head>
 <body>
   <div id="header">
@@ -14,7 +15,7 @@
   </div>
 
   <div id="content">
-    <div class="box hideable">
+    <div class="box">
     <h1>Welcome!</h1>
     
     <p>You've discovered a Sunny+Share box placed near-by by someone who
@@ -30,10 +31,10 @@
       or unlawful content will be removed.</p>
       
     <p>For more information about this service, see <a href="/about.html">About Sunny+Share</a></p>
-    <a href="#" onclick="this.parentNode.style.display = 'none'">Hide this message</a>
+    <a href="#" onclick="$(this).parent().hide(1000);">Hide this message</a>
 	  </div>
 		<div id="shoutbox">
-		  <h2>Chat with others near-by in real time:</h2>
+		  <h2>Announcement board: Leave messages for near-by wanderers</h2>
 			<noscript><h2>Sorry, but chat won't work without JavaScript enabled.</h2></noscript>
       <?php 
       drawChatForm();

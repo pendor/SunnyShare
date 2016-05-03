@@ -1,5 +1,7 @@
 <?php 
-if(!session_id()) session_start();
+if(!session_id()) {
+  session_start();
+}
 
 $maxLen = "512";
 $dataFile = "chat.json";
@@ -103,11 +105,14 @@ if(isset($_POST['message'])) {
 }
 
   function drawChatBox() {
+    global $dataFile;
 ?>
-<script src="combo.js"></script>
 <div class="grid" id="chat"></div>
-
+<div class="curtime" id="curtime"></div>
 <script type="text/javascript">
+var DATE_RFC2822 = "ddd, DD MMM YYYY HH:mm:ss ZZ";
+var refresh = 5000;
+
 function postMessage() {
   var ajax = new XMLHttpRequest();
   ajax.onreadystatechange = function() {
@@ -131,31 +136,35 @@ function fetchChat() {
       drawChat(JSON.parse(xmlhttp.responseText));
     }
   };
-  xmlhttp.open("GET", "/<?= pathinfo($dataFile, PATHINFO_BASENAME) ?>?" + getTime());
+
+  xmlhttp.open("GET", "/<?= pathinfo($dataFile, PATHINFO_BASENAME) ?>");
   xmlhttp.send();
 }
 
 function drawChat(arr) {
-  var out = "";
-  for(var i = arr.length - 1; i >= 0 ; i--) {
-    var relTime = moment.unix(arr[i].t).fromNow();
+  var chat = $('#chat');
+  
+  for(var i = 0; i < arr.length ; i++) {
+    var posted = moment.unix(arr[i].t);
+    var relTime = posted.fromNow();
+    var absTime = posted.format('MMMM Do YYYY, h:mm:ss a');
     var msg;
-    if(arr[i].p == '1') {
+    if(arr[i].hasOwnProperty('p') && arr[i].p == '1') {
       msg = arr[i].n;
     } else {
       msg = htmlEntities(arr[i].n);
     }
     
-    out += '<div class="grid-item chatbox" style="background-color: ' + arr[i].c + '">' + 
-      '<span class="chat-name">' + msg + '</span>: ' +
-      htmlEntities(arr[i].m) + 
-      '<span class="chat-time">' + relTime + '</span></div>';    
+    if(chat.find('#el' + arr[i].t).length == 0) {    
+      chat.prepend('<div id="el' + arr[i].t + '" class="grid-item chatbox" style="background-color: ' + arr[i].c + '">' + 
+        '<span class="chat-name">' + msg + '</span><br/> ' +
+        '<span class="chat-message">' + htmlEntities(arr[i].m) + '</span><br/>' + 
+        '<abbr class="chat-time" title="' + absTime + '">' + relTime + '</abbr></div>');
     }
-    document.getElementById("chat").innerHTML = out;
-    
-  var msnry = new Masonry( '.grid', {
-    itemSelector: '.grid-item',
-  });
+  }
+  
+  chat.masonry('reloadItems');
+  chat.masonry('layout');
 }
 
 function htmlEntities(str) {
@@ -164,8 +173,10 @@ function htmlEntities(str) {
   });
 }
 
+$('#chat').masonry({itemSelector: '.grid-item'});
+
 fetchChat();
-window.setInterval(fetchChat, 5000);
+window.setInterval(fetchChat, refresh);
 </script>
 
 <?php } 
@@ -174,8 +185,8 @@ function drawChatForm() {
 ?>
 <form name="inpform" method="post" onsubmit="postMessage(); return false;">
 <b>Nickname:</b> 
-<input name="name" id="name" type="text" value="<?= isset($_COOKIE['name_chat']) ? $_COOKIE['name_chat'] : '' ?>" size="15" /><br/>
+<input name="name" id="name" type="text" 
+  value="<?= isset($_COOKIE['name_chat']) ? $_COOKIE['name_chat'] : '' ?>" size="20" /><input type="submit" value="Post" /><br/>
 <input type="text" id="message" name="message" placeholder="Type your message here" size="40"/>
-<input type="submit" value="Post" />
 </form> 
 <?php } ?>

@@ -217,7 +217,7 @@
   <div id="header">
 		<a id="logo" href="/"><img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/></a>
 		<a href="/">Home</a> &bull;
-		<a href="/Shared/">Library</a> &bull;
+		<a href="/Shared/" class="current">Library</a> &bull;
 		<a href="/about.html">About</a>
   </div>
 
@@ -264,7 +264,7 @@
 		if(!$canupload) { ?>
 		  <div class="box">
 		    <h2>Share your files:</h2>
-		    <p>Some directories on this box may allow you to upload files (but this directory)
+		    <p>Some directories on this box may allow you to upload files (but this directory
 		      doesn't).  You might look for an 'incoming' or similar place to share files others
 		      might find interesting.</p>
 	    </div>

@@ -40,6 +40,10 @@ p {
   margin: 0 0 1em;
 }
 
+li {
+	margin-bottom: .5em;
+}
+
 a {
   color: #ad000b;
   text-decoration: none;
@@ -49,9 +53,11 @@ a:hover {
   text-decoration: underline;
 }
 
-.current {
-  color: white;
+a.current {
+  color: white !important;
+  display: none;
 }
+
 .box {
   -webkit-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   -moz-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
@@ -94,20 +100,21 @@ a:hover {
   margin: 2em;
 }
 
-
 #header {
+  margin-top: -10px;
   background: #1b1d1e;
   height: 40px;
+  padding-left: 2px;
 }
 
 #header a {
   color: #ad000b;
   font-size: 1.2em;
-  vertical-align: bottom;
 }
 
 #logo {
-  float: left;
+  top: 10px;
+  position: relative;
 }
 
 #content {
@@ -118,33 +125,23 @@ a:hover {
 }
 
 a#logo {
-  margin: 0 2em 0 0;
-  display: block;
+  margin: 0 .5em 0 0;
 }
 
 .grid-item {
   width: 280px;
 }
 
-.hideable {
- display:block;
- transition: all 1s ease-out;
-}
-
-
 .chatbox {
-  -webkit-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
-  -moz-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
-  box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
-  
-  border-radius: 4px 4px 4px 4px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
-  border: 2px solid #000000;
+  box-shadow: 4px 4px 10px 1px rgba(0,0,0,0.75);
+  border-radius: 8px 8px 8px 8px;
+  border: 1px dotted #000000;
   background-color: #FEEB5C;
   padding: .5em;
-  margin: 2em;
-  min-height: 180px;
+  margin: .75em;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-time::before {
@@ -154,8 +151,20 @@ a#logo {
 .chat-time {
   font-style: italic;
   font-size: 70%;
+  text-align: right;
+}
+
+.chat-name::before {
+	content: "From: ";
+	font-weight: normal;
 }
 
 .chat-name {
   font-weight: bold;
+	
 }
+
+.chat-message {
+	flex-grow: 1;
+}
+
