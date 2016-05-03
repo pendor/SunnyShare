@@ -1,0 +1,5 @@
+LABEL=cloudimg-rootfs	/	 ext4	noatime	0 0
+LABEL=system-boot       /boot/firmware  vfat    noauto,noatime        	0       1
+LABEL=swap		swap		swap	auto,nofail		0 	0
+LABEL=data		/mnt/data	ext4	auto,nofail,noatime	0 	0
+

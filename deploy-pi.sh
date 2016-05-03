@@ -1,11 +1,12 @@
 #!/bin/bash
 
 if [ -z $1 ] ; then
-  echo "Usage: $0 [user@]<ssh_host>"
+  echo "Usage: $0 <ssh_host>"
   exit 1
 fi
 
 
-rm -f copy-to/files/www/combo.js
-cat copy-to/files/www/*.js > copy-to/files/www/combo.js
-scp -r copy-to/files/www/* ${1}:/var/www/html/
+rm -f www/combo.js
+cat www/*.js > www/combo.js
+scp -r www/* www-data@${1}:/var/www/html/
+scp -r etc/* root@${1}:/etc/
