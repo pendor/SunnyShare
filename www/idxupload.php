@@ -14,9 +14,8 @@
 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	*/
   
-  // FIXME: Too much hardcoded crap here...
-  $upRoot = '/mnt/data';
-  $allowedUploadRoots = array( 'Shared', 'Extra' );
+  include('functions.php');
+  include('config.php');
 	
   if(isset($_FILES['file'])) {
     $urlPath = rtrim(ltrim($_POST['uploaddir'], '/'), '/');
@@ -29,7 +28,7 @@
     httperr(403, 'Bad upload path - no double dots allowed in filename');
   }
   
-  $path = $upRoot . '/' . $urlPath;
+  $path = $files_upRoot . '/' . $urlPath;
   
   // Can't call the script directly since REQUEST_URI won't be a directory
   if($_SERVER['PHP_SELF'] == $path || strpos($path, $_SERVER['PHP_SELF']) !== FALSE) {
@@ -37,7 +36,7 @@
   }
   
   $rootOk = false;
-  foreach($allowedUploadRoots as $rt) {
+  foreach($files_allowedUploadRoots as $rt) {
     if($urlPath == $rt || strpos($urlPath, $rt . '/') === 0) {
       $rootOk = true;
     }
@@ -68,29 +67,9 @@
   );
   
   // Omit .. if in one of the roots already
-  if(in_array($urlPath, $allowedUploadRoots)) {
+  if(in_array($urlPath, $files_allowedUploadRoots)) {
     $settings['ignores'][] = '..';
   } 
-
-  function httperr($code, $text) {
-    // Special handling for CGI:
-    header('Status: ' . $code . ' ' . $text);
-    echo $text . "\n";
-    $GLOBALS['http_response_code'] = $code;
-    exit;
-  }
-
-	function FormatSize($bytes) {
-		$units = array('B', 'KB', 'MB', 'GB', 'TB');
-
-		$bytes = max($bytes, 0);
-		$pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-		$pow = min($pow, count($units) - 1);
-
-		$bytes /= pow(1024, $pow);
-
-		return ceil($bytes) . ' ' . $units[$pow];
-	}
 
   function normalize_files_array($files = []) {
     $normalized_array = [];
@@ -165,15 +144,6 @@
       echo "Received: $filename\n";
     }
 	}
-
-  // Normalize line endings to unix format  
-  function normalize($s) {
-    $s = str_replace("\r\n", "\n", $s);
-    $s = str_replace("\r", "\n", $s);
-    // Don't allow out-of-control blank lines
-    $s = preg_replace("/\n{2,}/", "\n\n", $s);
-    return $s;
-  }
   
 	// List files in a given directory, excluding certain files
 	function ListFiles($dir, $exclude) {
