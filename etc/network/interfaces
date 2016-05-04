@@ -17,3 +17,12 @@ iface wlan0 inet static
     netmask 255.255.255.0
     network 192.168.1.0
     broadcast 192.168.1.255
+
+auto eth0
+iface eth0 inet dhcp
+
+auto wlan1
+iface wlan1 inet dhcp
+pre-up wpa_supplicant -Bw -Dwext -iwlan1 -c/etc/wpa_supplicant.conf
+post-down killall -q wpa_supplicant
+
