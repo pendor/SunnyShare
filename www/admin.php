@@ -130,7 +130,7 @@ function printFiles($path, $level) {
   
   if(is_dir($path)) {
     if($dh = opendir($path)) {
-      $spaces = $level * 20;
+      $spaces = 20 + ($level * 20);
       while(($file = readdir($dh)) !== false) {
         $fullpath = $path . DIRECTORY_SEPARATOR . $file;
         $trimname = substr($fullpath, strlen($files_libraryRoots));
@@ -138,7 +138,7 @@ function printFiles($path, $level) {
           continue;
         }
 
-        echo '<span style="padding-left: ' . $spaces . 'px;">' . 
+        echo '<span style="padding-left: ' . $spaces . 'px;"><span style="font-size: 150%; line-height: 0;">&#8594;</span> ' . 
           '<a href="Shared/' . $trimname . '">' .
           $file . '</a> :: <a onclick="return confirm(\'Are you sure you want to delete this file or directory?\')" href="?f=d&p=' . urlencode($trimname) . '">Delete</a></span><br/>';
         if(is_dir($fullpath)) {

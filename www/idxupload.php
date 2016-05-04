@@ -281,11 +281,11 @@ function uploadFile() {
   ajax.onreadystatechange = function(event) {
     if(ajax.readyState == 4) {
       if(ajax.status == 200) {
-        status.innerHTML = '<img src="/check.png" width="25" height="25"/> ' + 
+        status.innerHTML = '<span style="color: green; font-size: 200%;">&#10003;</span> ' + 
     	    'Upload complete:<br/>' + ajax.responseText;
         window.setTimeout(function() {location.reload();}, 1500);
       } else {
-        status.innerHTML = '<img src="/error.png" width="25" height="25"/> ' + 
+        status.innerHTML = '<span style="color: red; font-size: 200%;">&#215;</span> ' + 
           'Error uploading:<br/>' + ajax.status + ' ' + ajax.statusText + ' : ' + ajax.responseText;
       }
     }
@@ -304,7 +304,5 @@ function uploadFile() {
 </div>
 <!-- Preload: -->
 <img src="/ball.gif" width="1" height="1" style="opacity: 0.01;"/>
-<img src="/check.png" width="1" height="1" style="opacity: 0.01;"/>
-<img src="/error.png" width="1" height="1" style="opacity: 0.01;"/>
 </body>
 </html>
