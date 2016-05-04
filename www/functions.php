@@ -189,4 +189,20 @@ function chat_delMessageHash($expectedHash, $time) {
   
   return $outJson;
 }
+
+function rmrf($dir) {
+  if(!strlen($dir)) {
+    return false;
+  }
+  
+  if(!is_dir($dir)) {
+    return unlink($dir);
+  }
+  
+  $files = array_diff(scandir($dir), array('.','..'));
+  foreach ($files as $file) {
+    (is_dir("$dir/$file")) ? rmrf("$dir/$file") : unlink("$dir/$file");
+  }
+  return rmdir($dir);
+} 
 ?>

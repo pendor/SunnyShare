@@ -1,6 +1,6 @@
 # Sunny+Share
 
-![Sunny+Share Logo](https://raw.githubusercontent.com/pendor/SunnyShare/master/copy-to/files/www/logo.png)
+![Sunny+Share Logo](https://raw.githubusercontent.com/pendor/SunnyShare/master/www/logo.png)
 
 Sunny+Share is a sharing platform based on the concept of PirateBox and LibraryBox.  
 

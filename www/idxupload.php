@@ -182,7 +182,7 @@
 	<link rel="stylesheet" href="/style.css"/>
 	<title>Sunny+Share - Share Freely!</title>
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
-  <script src="combo.js" type="text/javascript"></script>
+  <script src="/combo.js" type="text/javascript"></script>
 </head>
 <body>
   <div id="header">
@@ -255,6 +255,11 @@
 
 <script charset="utf-8" type="text/javascript">
 function uploadFile() {
+  if($('#file1').val() == '') {
+    alert('Please select a file first.');
+    return false;
+  }
+  
   var prog = document.getElementById("progressBar");
   var status = document.getElementById("status");
 	var file = document.getElementById("file1").files[0];
