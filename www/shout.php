@@ -1,12 +1,32 @@
 <?php 
-if(!session_id()) {
-  session_start();
-}
-
 $maxLen = "512";
 $dataFile = "chat.json";
 $colors = array('#FFFFA5', '#E69D36', '#58C3EC', 
   '#B68CC2', '#C9DF6F', '#EEA1BC', '#87EBEE');
+$cookieTime = ((2021-1970) * 60 * 60 * 24 * 365);
+
+include('key.php');
+
+if(!session_id()) {
+  session_start();
+}
+
+if(isset($_COOKIE['secid'])) {
+  $secId = $_COOKIE['secid'];
+} else {
+  $secId = random_str(32);
+  setcookie('secid', $secId, $cookieTime);
+}
+
+function random_str($length) {
+  $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  $str = '';
+  $max = strlen($keyspace) - 1;
+  for($i = 0; $i < $length; ++$i) {
+    $str .= $keyspace[random_int(0, $max)];
+  }
+  return $str;
+}
 
 function relDate($date) {
   $now = time();
@@ -56,10 +76,11 @@ if(isset($_POST['message'])) {
     }
 
     //add cookie to store name
-    setcookie("name_chat", $name, ((2021-1970) * 60 * 60 * 24 * 365));
+    setcookie("name_chat", $name, $cookieTime);
 
     $time = time();
-
+    $delHash = sha1($secId . $time);
+    
     $fp = fopen($dataFile, 'r+');
     if(flock($fp, LOCK_EX)) {  // acquire an exclusive lock
       $flen = filesize($dataFile);
@@ -74,6 +95,7 @@ if(isset($_POST['message'])) {
         'n' => $name,
         'm' => $message,
         'c' => $colors[array_rand($colors)],
+        'i' => $delHash,
       );
       ftruncate($fp, 0);
       rewind($fp);
@@ -89,6 +111,51 @@ if(isset($_POST['message'])) {
     echo $newJson;
     exit;
   }
+} else if(isset($_POST['d'])) {
+  // Try to delete a message
+  $tm = $_POST['tm'];
+  $expectedHash = sha1($secId . $tm);
+  
+  $outJson = '';
+  $fp = fopen($dataFile, 'r+');
+  if(flock($fp, LOCK_EX)) {  // acquire an exclusive lock
+    $flen = filesize($dataFile);
+    if($flen == 0) {
+      $json = array();
+    } else {
+      $json = fread($fp, $flen);
+      $msgs = json_decode($json, true);
+    }
+    
+    $changed = false;
+    $newAr = array();
+    foreach($msgs as $m) {
+      if($m['t'] == $tm && $m['i'] == $expectedHash) {
+        $changed = true;
+        continue;
+      }
+      $newAr[] = $m;
+    }
+    
+    if($changed) {
+      // No sense rewriting if we didn't delete anything.
+      ftruncate($fp, 0);
+      rewind($fp);
+      $newJson = json_encode($newAr);
+      fwrite($fp, $newJson);
+      fflush($fp);
+      $outJson = $newJson;
+    } else {
+      $outJson = $json;
+    }
+    
+    flock($fp, LOCK_UN);
+    fclose($fp);
+  } else {
+    die('Couldn\'t lock messages file.');
+  }
+  
+  echo $outJson;
 } else if(isset($_GET['json'])) {
   $fp = fopen($dataFile, 'r');
   if(flock($fp, LOCK_SH)) {
@@ -105,7 +172,7 @@ if(isset($_POST['message'])) {
 }
 
   function drawChatBox() {
-    global $dataFile;
+    global $dataFile, $delHash;
 ?>
 <div class="grid" id="chat"></div>
 <div class="curtime" id="curtime"></div>
@@ -117,15 +184,15 @@ function postMessage() {
   var ajax = new XMLHttpRequest();
   ajax.onreadystatechange = function() {
     if(ajax.readyState == 4 && ajax.status == 200) {
-      document.getElementById('message').value = '';
+      $('#message').val('');
       drawChat(JSON.parse(ajax.responseText));
     }
   }
   
-	ajax.open("POST", "/<?= pathinfo(__FILE__, PATHINFO_BASENAME) ?>");
+	ajax.open('POST', "/<?= pathinfo(__FILE__, PATHINFO_BASENAME) ?>");
 	var formdata = new FormData();
-	formdata.append("name", document.getElementById('name').value);
-	formdata.append("message", document.getElementById('message').value);
+	formdata.append('name', $('#name').val());
+	formdata.append('message', $('#message').val());
 	ajax.send(formdata);
 }
 
@@ -137,14 +204,17 @@ function fetchChat() {
     }
   };
 
-  xmlhttp.open("GET", "/<?= pathinfo($dataFile, PATHINFO_BASENAME) ?>");
+  xmlhttp.open('GET', "/<?= pathinfo($dataFile, PATHINFO_BASENAME) ?>");
   xmlhttp.send();
 }
 
 function drawChat(arr) {
   var chat = $('#chat');
   
+  var matchedIds = [ ];
+  
   for(var i = 0; i < arr.length ; i++) {
+    matchedIds.push('el' + arr[i].t);
     var posted = moment.unix(arr[i].t);
     var relTime = posted.fromNow();
     var absTime = posted.format('MMMM Do YYYY, h:mm:ss a');
@@ -155,16 +225,62 @@ function drawChat(arr) {
       msg = htmlEntities(arr[i].n);
     }
     
-    if(chat.find('#el' + arr[i].t).length == 0) {    
-      chat.prepend('<div id="el' + arr[i].t + '" class="grid-item chatbox" style="background-color: ' + arr[i].c + '">' + 
-        '<span class="chat-name">' + msg + '</span><br/> ' +
+    var secId = getCookie('secid');
+    if(chat.find('#el' + arr[i].t).length == 0) {
+      var msgHash = arr[i].hasOwnProperty('i') ? arr[i].i : 'INVALID';
+      var del = '';
+      var delHash = Sha1.hash(secId + arr[i].t);
+      if(delHash == msgHash) {
+        del = ' <a href="#" class="delbtn" onclick="delMesg(' + arr[i].t + ', $(this).parent());">Delete</a> '
+      }
+      chat.prepend('<div id="el' + arr[i].t + '" class="grid-item chatbox" style="background-color: ' + arr[i].c + '">' +
+        '<span class="chat-name">' + msg + del + '</span><br/> ' +
         '<span class="chat-message">' + htmlEntities(arr[i].m) + '</span><br/>' + 
         '<abbr class="chat-time" title="' + absTime + '">' + relTime + '</abbr></div>');
     }
   }
   
+  $('#chat').find('div').each(function() {
+    var thisId = $(this).attr('id')
+    if(matchedIds.indexOf(thisId) == -1) {
+      $(this).remove();
+    }
+  });
+  
   chat.masonry('reloadItems');
   chat.masonry('layout');
+}
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while(c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length,c.length);
+    }
+  }
+  return '';
+} 
+
+function delMesg(tm, el) {
+  el.remove();
+  
+  var ajax = new XMLHttpRequest();
+  ajax.onreadystatechange = function() {
+    if(ajax.readyState == 4 && ajax.status == 200) {
+      drawChat(JSON.parse(ajax.responseText));
+    }
+  }
+  
+	ajax.open('POST', "/<?= pathinfo(__FILE__, PATHINFO_BASENAME) ?>");
+	var formdata = new FormData();
+	formdata.append('tm', tm);
+	formdata.append('d', '1');
+	ajax.send(formdata);
 }
 
 function htmlEntities(str) {

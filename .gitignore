@@ -3,4 +3,5 @@ firmware
 .vagrant
 dl
 www/combo.js
+www/key.php
 .DS_Store

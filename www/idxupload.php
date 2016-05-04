@@ -212,13 +212,12 @@
 	<link rel="stylesheet" href="/style.css"/>
 	<title>Sunny+Share - Share Freely!</title>
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
+  <script src="combo.js" type="text/javascript"></script>
 </head>
 <body>
   <div id="header">
 		<a id="logo" href="/"><img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/></a>
-		<a href="/">Home</a> &bull;
-		<a href="/Shared/" class="current">Library</a> &bull;
-		<a href="/about.html">About</a>
+		<a href="/about.html">?</a>
   </div>
 
   <div id="content">

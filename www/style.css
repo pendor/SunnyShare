@@ -58,6 +58,22 @@ a.current {
   display: none;
 }
 
+.boxclose {
+  float:right;
+  margin-top:-20px;
+  margin-right:-20px;
+  cursor:pointer;
+  color: #fff;
+  border: 2px solid #eeeeee;
+  border-radius: 30px;
+  background: #333333;
+  font-size: 17px;
+  font-weight: bold;
+  display: inline-block;
+  line-height: 2px;
+  padding: 13px 8px;    
+}
+
 .box {
   -webkit-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   -moz-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
@@ -122,10 +138,11 @@ a.current {
   height: auto !important;
   height: 100%;
   clear: both;
+  margin-top: .5em
 }
 
 a#logo {
-  margin: 0 .5em 0 0;
+  margin: 0 .2em 0 0;
 }
 
 .grid-item {
@@ -167,4 +184,31 @@ a#logo {
 .chat-message {
 	flex-grow: 1;
 }
+
+
+.delbtn {
+  background: #d3605e;
+  background-image: linear-gradient(to bottom, #d3605e, #c92b26);
+  border-radius: 5px;
+  text-shadow: 1px 1px 3px #666666;
+  box-shadow: 0px 1px 3px #666666;
+  font-family: Arial;
+  font-size: 12pt !important;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 4px 8px 4px 8px;
+  text-decoration: none;
+	float:right
+}
+
+.delbtn:hover {
+  background: #c92b26;
+  background-image: -webkit-linear-gradient(top, #c92b26, #d3605e);
+  background-image: -moz-linear-gradient(top, #c92b26, #d3605e);
+  background-image: -ms-linear-gradient(top, #c92b26, #d3605e);
+  background-image: -o-linear-gradient(top, #c92b26, #d3605e);
+  background-image: linear-gradient(to bottom, #c92b26, #d3605e);
+  text-decoration: none;
+}
+
 

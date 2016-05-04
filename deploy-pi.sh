@@ -7,6 +7,6 @@ fi
 
 
 rm -f www/combo.js
-cat www/*.js > www/combo.js
+cat www/js/*.js > www/combo.js
 scp -r www/* www-data@${1}:/var/www/html/
 scp -r etc/* root@${1}:/etc/
