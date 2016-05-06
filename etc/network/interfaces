@@ -1,6 +1,3 @@
-# This file describes the network interfaces available on your system
-# and how to activate them. For more information, see interfaces(5).
-
 # The loopback network interface
 auto lo
 iface lo inet loopback
@@ -9,7 +6,7 @@ iface lo inet loopback
 # Please check /etc/network/interfaces.d before changing this file
 # as interfaces may have been defined in /etc/network/interfaces.d
 # See LP: #1262951
-source /etc/network/interfaces.d/*.cfg
+# source /etc/network/interfaces.d/*.cfg
 
 auto wlan0
 iface wlan0 inet static
@@ -18,11 +15,14 @@ iface wlan0 inet static
     network 192.168.1.0
     broadcast 192.168.1.255
 
-auto eth0
-iface eth0 inet dhcp
+iface eth0 inet static
+    address 192.168.2.1
+    netmask 255.255.255.0
+    network 192.168.2.0
+    broadcast 192.168.2.255
 
-auto wlan1
-iface wlan1 inet dhcp
-pre-up wpa_supplicant -Bw -Dwext -iwlan1 -c/etc/wpa_supplicant.conf
-post-down killall -q wpa_supplicant
+allow-hotplug wlan1
+iface wlan1 inet manual
+wpa-roam /etc/wpa_supplicant.conf 
 
+iface default inet dhcp

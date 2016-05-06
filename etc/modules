@@ -4,4 +4,5 @@
 # at boot time, one per line. Lines beginning with "#" are ignored.
 
 8812au
+8192cu
 

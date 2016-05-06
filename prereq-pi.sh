@@ -5,6 +5,6 @@ if [ -z $1 ] ; then
   exit 1
 fi
 
-PKGS="lighttpd php-cli php-cgi"
+PKGS="lighttpd php-cli php-cgi ifplugd"
 
 ssh "$1" 'apt-get update && apt-get install $PKGS'

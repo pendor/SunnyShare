@@ -5,3 +5,4 @@ dl
 www/combo.js
 www/config.php
 .DS_Store
+etc/wpa_supplicant.conf
