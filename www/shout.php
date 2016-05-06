@@ -1,7 +1,7 @@
 <?php 
 
-include('config.php');
-include('functions.php');
+require_once('config.php');
+require_once('functions.php');
 
 if(isset($_POST['message'])) {
   $message = trim($_POST['message']);
@@ -15,7 +15,7 @@ if(isset($_POST['message'])) {
     }
 
     //add cookie to store name
-    setcookie("name_chat", $name, $cookieTime);
+    setcookie("name_chat", $name, $cookieTime, '/');
     
     echo $newJson = chat_addMessage($name, $message, $secId);
     exit;

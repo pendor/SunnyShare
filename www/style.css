@@ -45,7 +45,7 @@ li {
 }
 
 a {
-  color: #ad000b;
+  color: #DC2E00;
   text-decoration: none;
 }
 
@@ -75,13 +75,9 @@ a.current {
 }
 
 .box {
-  -webkit-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
-  -moz-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   
   border-radius: 13px 13px 13px 13px;
-  -moz-border-radius: 13px 13px 13px 13px;
-  -webkit-border-radius: 13px 13px 13px 13px;
   border: 2px solid #000000;
   background-color: #8acc8d;
   padding: .5em;
@@ -89,13 +85,9 @@ a.current {
 }
 
 .readme {
-  -webkit-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
-  -moz-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   
   border-radius: 13px 13px 13px 13px;
-  -moz-border-radius: 13px 13px 13px 13px;
-  -webkit-border-radius: 13px 13px 13px 13px;
   border: 2px solid #000000;
   background-color: #76AFDE;
   padding: .5em;
@@ -103,13 +95,9 @@ a.current {
 }
 
 .error {
-  -webkit-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
-  -moz-box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   box-shadow: 10px 10px 28px 1px rgba(0,0,0,0.75);
   
   border-radius: 13px 13px 13px 13px;
-  -moz-border-radius: 13px 13px 13px 13px;
-  -webkit-border-radius: 13px 13px 13px 13px;
   border: 2px solid #000000;
   background-color: #F37A5C;
   padding: .5em;
@@ -124,11 +112,11 @@ a.current {
 }
 
 #header a {
-  color: #ad000b;
+  color: #DC2E00;
   font-size: 1.2em;
 }
 
-#logo {
+#header img {
   top: 10px;
   position: relative;
 }
@@ -203,12 +191,25 @@ a#logo {
 
 .delbtn:hover {
   background: #c92b26;
-  background-image: -webkit-linear-gradient(top, #c92b26, #d3605e);
-  background-image: -moz-linear-gradient(top, #c92b26, #d3605e);
-  background-image: -ms-linear-gradient(top, #c92b26, #d3605e);
-  background-image: -o-linear-gradient(top, #c92b26, #d3605e);
   background-image: linear-gradient(to bottom, #c92b26, #d3605e);
   text-decoration: none;
 }
 
+.topbar {
+  padding: 0 2em 0 2em;
+  margin:0;
+  border: 1px solid black;
+  box-shadow: 0 2px 8px 1px rgba(0,0,0,0.75);
+}
 
+.warn {
+  background-color: #E9C130;
+}
+
+.nav {
+  background-color: #ec8605;
+}
+
+.nav a {
+  color: #be0417;
+}

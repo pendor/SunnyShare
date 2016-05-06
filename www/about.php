@@ -1,18 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel="stylesheet" href="/style.css"/>
-	<title>Sunny+Share - Share Freely!</title>
-	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
-  <script src="combo.js" type="text/javascript"></script>
-</head>
-<body>
-  <div id="header">
-		<a id="logo" href="/"><img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/></a>
-		<a href="/Shared/">Library</a>
-  </div>
-
-  <div id="content">
+<?php 
+require_once('functions.php');
+printHeader(); 
+?>
     <div class="box">
       <h1>About Sunny+Share</h1>
       
@@ -42,6 +31,4 @@
         Sunny+Share itself is released under GPL version 3 only.
        </p>
      </div>
-   </div>
-</body>
-</html>
+<?php printFooter(); ?>

@@ -14,8 +14,8 @@
 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	*/
   
-  include('functions.php');
-  include('config.php');
+  require_once('functions.php');
+  require_once('config.php');
 	
   if(isset($_FILES['file'])) {
     $urlPath = rtrim(ltrim($_POST['uploaddir'], '/'), '/');
@@ -176,68 +176,54 @@
   
   $file_array = ListFiles($settings['uploaddir'], $settings['ignores']);
   
-?><!DOCTYPE html>
-<html>
-<head>
-	<link rel="stylesheet" href="/style.css"/>
-	<title>Sunny+Share - Share Freely!</title>
-	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
-  <script src="/combo.js" type="text/javascript"></script>
-</head>
-<body>
-  <div id="header">
-		<a id="logo" href="/"><img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/></a>
-		<a href="/about.html">?</a>
-  </div>
+  printHeader();
 
-  <div id="content">
-	<?php
-    $readme = $path . DIRECTORY_SEPARATOR . "readme.txt";
-    if(is_file($readme)) {
-      $txt = file_get_contents($readme, false, NULL, 0, 8192);
-      $txt = normalize($txt);
-      $txt = htmlentities($txt);
-      $txt = str_replace("\n", "<br/>", $txt);
-      echo '<div class="readme"><h2>About this directory:</h2>' . $txt . '</div>' . "\n";
-    } else {
-      echo '<h2>Files shared by others:</h2>';
+  $readme = $path . DIRECTORY_SEPARATOR . "readme.txt";
+  if(is_file($readme)) {
+    $txt = file_get_contents($readme, false, NULL, 0, 8192);
+    $txt = normalize($txt);
+    $txt = htmlentities($txt);
+    $txt = str_replace("\n", "<br/>", $txt);
+    echo '<div class="readme"><h2>About this directory:</h2>' . $txt . '</div>' . "\n";
+  } else {
+    echo '<h2>Files shared by others:</h2>';
+  }
+
+  if(!count($file_array)) {
+    echo "<h2>Nothing shared yet!</h2>";
+    if($canupload) {
+      echo "<p>Why not be the first?</p>";
     }
-  
-	  if(!count($file_array)) {
-	    echo "<h2>Nothing shared yet!</h2>";
-	    if($canupload) {
-	      echo "<p>Why not be the first?</p>";
-      }
-	  } else {
-  		echo '<ul>';
-  		foreach($file_array as $filename) {
-        $fullname = $path . DIRECTORY_SEPARATOR . $filename;
-        if($filename == '../') {
-          $info = ' (Parent Directory)';
-        } else if(substr($filename, -1) == '/') {
-          try {
-            $fi = new FilesystemIterator($fullname, FilesystemIterator::SKIP_DOTS);
-            $info = '(' . iterator_count($fi) . ' files)';
-          } catch(Exception $ex) {
-            $info = ' (Read error)';
-          }
-  		  } else {
-  		    $info = ' - ' . FormatSize(filesize($fullname));
-  		  }
-  			echo '<li><a href="' . $filename . '">' . $filename . 
-  			  '</a>' . $info . '</li>';
-  		}
-  		echo '</ul>';
+  } else {
+		echo '<ul>';
+		foreach($file_array as $filename) {
+      $fullname = $path . DIRECTORY_SEPARATOR . $filename;
+      if($filename == '../') {
+        $info = ' (Parent Directory)';
+      } else if(substr($filename, -1) == '/') {
+        try {
+          $fi = new FilesystemIterator($fullname, FilesystemIterator::SKIP_DOTS);
+          $info = '(' . iterator_count($fi) . ' files)';
+        } catch(Exception $ex) {
+          $info = ' (Read error)';
+        }
+		  } else {
+		    $info = ' - ' . FormatSize(filesize($fullname));
+		  }
+			echo '<li><a href="' . $filename . '">' . $filename . 
+			  '</a>' . $info . '</li>';
 		}
-		
-		if(!$canupload) { ?>
+		echo '</ul>';
+	}
+	
+	if(!$canupload) { ?>
 		  <div class="box">
 		    <h2>Share your files:</h2>
 		    <p>Some directories on this box may allow you to upload files (but this directory
 		      doesn't).  You might look for an 'incoming' or similar place to share files others
 		      might find interesting.</p>
 	    </div>
-	<?php } else { ?>
+<?php } else { ?>
 		<div class="box">
   		<h2>Share your files:</h2>
   		<form method="post" enctype="multipart/form-data" id="upload_form">
@@ -300,9 +286,8 @@ function uploadFile() {
 	ajax.send(formdata);
 }
 </script>
-		<?php } ?>
-</div>
+	<?php } ?>
+
 <!-- Preload: -->
 <img src="/ball.gif" width="1" height="1" style="opacity: 0.01;"/>
-</body>
-</html>
+<?php printFooter(); ?>

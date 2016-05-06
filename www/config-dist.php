@@ -6,7 +6,7 @@ $cookieTime = ((2021-1970) * 60 * 60 * 24 * 365);
 
 // Shoutbox settings
 $chat_maxLen = "512";
-$chat_dataFile = "chat.json";
+$chat_dataFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'chat.json';
 $chat_colors = array('#FFFFA5', '#E69D36', '#58C3EC', 
   '#B68CC2', '#C9DF6F', '#EEA1BC', '#87EBEE');
 $chat_refreshTime = 5000;

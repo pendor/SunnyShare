@@ -1,5 +1,5 @@
 <?php
-include('config.php');
+require_once('config.php');
 
 if(!session_id()) {
   session_start();
@@ -9,7 +9,82 @@ if(isset($_COOKIE['secid'])) {
   $secId = $_COOKIE['secid'];
 } else {
   $secId = random_str(32);
-  setcookie('secid', $secId, $cookieTime);
+  setcookie('secid', $secId, $cookieTime, '/');
+}
+
+function checkAdmin() {
+  global $adminKey, $cookieTime;
+
+  if(isset($_GET['lo']) && $_GET['lo'] == '1') {
+    setcookie('admin', '', $cookieTime, '/');
+    unset($_GET['k']);
+    unset($_COOKIE['admin']);
+    loginForm();
+    exit;
+  }
+
+  if(!isset($_COOKIE['admin']) || $_COOKIE['admin'] != $adminKey) {
+    if(!isset($_GET['k']) || $_GET['k'] != $adminKey) {
+      loginForm();
+      exit;
+    } else {
+      setcookie('admin', $_GET['k'], $cookieTime, '/');
+    }
+  }
+}
+
+function isAdmin() {
+  global $adminKey;
+  return
+    (isset($_COOKIE['admin']) && $_COOKIE['admin'] == $adminKey) ||
+    (isset($_GET['k']) && $_GET['k'] == $adminKey);
+}
+
+function loginForm() {
+  printHeader();
+?>
+  <div class="box">
+    <form method="get">
+      <p>You need to login first:</p>
+      <input type="password" name="k"/>
+      <input type="submit" value="Login"/>
+    </form>
+  </div>
+<?php  
+  printFooter();
+}
+
+function printHeader($adminNav=false) {
+?><!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="/style.css"/>
+	<title>Sunny+Share - Share Freely!</title>
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
+  <script src="combo.js" type="text/javascript"></script>
+</head>
+<body>
+  <div id="header">
+		<img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/>
+  </div>
+  <?php
+  if($adminNav) {
+    ?><div class="nav"><a href="/admin/announce.php">Announcements</a> • <a href="/admin/net.php">Network</a> • <a href="/admin/files.php">Files</a></div><?php
+  } else {
+    ?><div class="topbar nav"><a href="/">Announcements</a> • <a href="/Shared/">Files</a> • <a href="/about.php">About</a></div><?php
+  }
+  
+  if(isAdmin()) {?>
+  <div class="topbar warn">You're logged in as <a href="/admin/">admin</a>.  <a href="/admin/?lo=1">Logout</a></div>
+  <?php } ?>
+
+  <div id="content"><?php
+}
+
+function printFooter() {
+?>  </div>
+</body>
+</html><?php
 }
 
 function httperr($code, $text) {

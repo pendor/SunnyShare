@@ -1,19 +1,8 @@
-<?php include("shout.php"); ?><!DOCTYPE html>
-<html>
-<head>
-	<link rel="stylesheet" href="/style.css"/>
-	<title>Sunny+Share - Share Freely!</title>
-	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
-  <script src="combo.js" type="text/javascript"></script>
-</head>
-<body>
-  <div id="header">
-		<a id="logo" href="/"><img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/></a>
-		<a href="/Shared/">Library</a>
-		<a href="/about.html">?</a> 
-  </div>
-
-  <div id="content">
+<?php 
+require_once('functions.php');
+require_once('shout.php'); 
+printHeader();
+?>
     <div class="box">
       <a href="#" onclick="$(this).parent().hide(1000);" class="boxclose">X</a>
     <h1>What's This?!?</h1>
@@ -35,6 +24,4 @@
       drawChatBox();
       ?>
 		</div>
-  </div>
-</body>
-</html>
+<?php printFooter(); ?>

@@ -1,17 +1,8 @@
 <?php
-include('config.php');
-include('functions.php');
+require_once('../config.php');
+require_once('../functions.php');
 
-$cookieTime = ((2021-1970) * 60 * 60 * 24 * 365);
-
-if(!isset($_COOKIE['admin']) || !$_COOKIE['admin'] == $adminKey) {
-  if(!isset($_GET['k']) || $_GET['k'] != $adminKey) {
-    httperr(404, 'Not found.');
-    exit;
-  } else {
-    setcookie('admin', $_GET['k'], $cookieTime);
-  }
-}
+checkAdmin();
   
 if(isset($_GET['r']) && isset($_GET['p'])) {
   $fn = $_GET['p'];
@@ -39,10 +30,7 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   } else {
     die('Bad action');
   }
-  header('Location: admin.php');
-} else if(isset($_GET['m']) && isset($_GET['t']) && isset($_GET['h']) && $_GET['m'] == 'd') {
-  chat_delMessageHash($_GET['h'], $_GET['t']);
-  header('Location: admin.php');
+  header('Location: /admin/');
 } else if(isset($_GET['f']) && isset($_GET['p'])) {
   $fn = $_GET['p'];
   if(strpos($fn, '..') !== false) {
@@ -56,42 +44,10 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   } else {
     die('Bad action');
   }
-  header('Location: admin.php');
+  header('Location: /admin/');
 }
+printHeader(true);
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<link rel="stylesheet" href="/style.css"/>
-	<title>Sunny+Share - Share Freely!</title>
-	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
-  <script src="combo.js" type="text/javascript"></script>
-</head>
-<body>
-  <div id="header">
-		<a id="logo" href="/"><img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/></a>
-		<a href="/Shared/">Library</a>
-  </div>
-
-  <div id="content">
-    <h1>Announcments:</h1>
-    <ol>
-<?php
-$msgs = chat_readMessages();
-foreach($msgs as $m) {
-  echo '<li>' . htmlentities($m['n']) . ' @ ' . $m['t'] . ': ' . htmlentities($m['m']) . ' || <a onclick="return confirm(\'Are you sure you want to delete this message?\')" href="?m=d&t=' . $m['t'] . '&h=' . $m['i'] . '">Delete</a></li>';
-}
-
-/*
-      't' => $time,
-      'n' => $name,
-      'm' => $message,
-      'c' => $chat_colors[array_rand($chat_colors)],
-      'i' => $delHash,
-*/
-?>
-    </ol>
-    <hr/>
     
     <h1>File Roots:</h1>
     <form method="get">
@@ -154,6 +110,5 @@ function printFiles($path, $level) {
 printFiles($files_libraryRoots, 0);
 ?>
   <i>Note: Links to download files only work for enabled roots.</i>
-   </div>
-</body>
-</html>
+  
+<?php printFooter(); ?>
