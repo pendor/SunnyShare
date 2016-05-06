@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+ 
+case "$2" in
+up)
+  if [ "$1" == "eth0" ] ; then /sbin/ifdown wlan1 ; fi 
+  ;;
+down)
+  if [ "$1" == "eth0" ] ; then /sbin/ifup wlan1 ; fi 
+  ;;
+esac 
