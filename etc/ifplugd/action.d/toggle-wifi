@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
- 
+# Based on : http://www.aoakley.com/articles/2013-07-31-raspberry-pi-networking.php
 case "$2" in
 up)
   if [ "$1" == "eth0" ] ; then /sbin/ifdown wlan1 ; fi 
