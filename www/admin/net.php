@@ -6,8 +6,10 @@ checkAdmin();
   
 printHeader(true);
 ?>
-
   <h1>Network Info:</h1>
+  
+  <b>Client MAC:</b> <?= getClientMac() ?><br/>
+  
   <h2>Associated WiFi</h2>
   <pre><?php system('iwconfig wlan1');?></pre><hr/>
   

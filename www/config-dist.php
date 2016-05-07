@@ -1,8 +1,10 @@
 <?php
 // Change key & rename to config.php
 $adminKey = 'changeme';
+$domainName = 'sunnyshare.space';
 
 $cookieTime = ((2021-1970) * 60 * 60 * 24 * 365);
+$macCacheTtl = 60 * 60 * 2;
 
 // Shoutbox settings
 $chat_maxLen = "512";

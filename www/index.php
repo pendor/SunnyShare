@@ -14,7 +14,7 @@ printHeader();
       when near by &amp; connected to the Sunny+Share WiFi connection.
     </p>
           
-    <p>For more information about this service, see <a href="/about.html">About Sunny+Share</a></p>
+    <p>For more information about this service, see <a href="/about.php">About Sunny+Share</a></p>
 	  </div>
 		<div id="shoutbox">
 		  <h2>Announcement board: Leave messages for near-by wanderers</h2>

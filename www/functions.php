@@ -1,15 +1,74 @@
 <?php
 require_once('config.php');
 
-if(!session_id()) {
-  session_start();
+if(!isset($no_mac_register)) {
+  
+  // Check if we're in on a bad domain name but not an IP:
+  $reqHost = $_SERVER['HTTP_HOST'];
+  if(preg_match('/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/', $reqHost) === false
+    && strcasecmp($reqHost, $domainName) != 0) {
+    // It's not an IP, and we're not on the right domain.  Redirect.
+    header('Location: http://' . $domainName . $_SERVER['REQUEST_URI']);
+    exit;
+  }
+  
+  if(!session_id()) {
+    session_start();
+  }
+
+  if(isset($_COOKIE['secid'])) {
+    $secId = $_COOKIE['secid'];
+  } else {
+    $secId = random_str(32);
+    setcookie('secid', $secId, $cookieTime, '/');
+  }
+  
+  if(!isset($_SESSION['mc'])) {
+    $mac = getClientMac();
+    $_SESSION['mc'] = $mac;
+    
+    $m = getMemcache();
+    if($m->get($mac) === FALSE) { 
+      $m->add($mac, '1', $macCacheTtl);
+    } else {
+    	$m->touch($mac, $macCacheTtl);
+    }
+  }
 }
 
-if(isset($_COOKIE['secid'])) {
-  $secId = $_COOKIE['secid'];
-} else {
-  $secId = random_str(32);
-  setcookie('secid', $secId, $cookieTime, '/');
+function isMacSet($mac) {
+  if(isset($_SESSION['mc']) && $_SESSION['mc'] == $mac) {
+    return true;
+  }
+  
+  $m = getMemcache();
+  if($m->get($mac) !== FALSE) {
+    return true;
+  }
+  
+  return false;
+}
+
+function getMemcache() {
+  $m = new Memcached();
+  $m->addServer('127.0.0.1', 11211);
+  return $m;
+}
+
+function getClientMac() {
+  $ipAddress=$_SERVER['REMOTE_ADDR'];
+  #run the external command, break output into lines
+  $arp=`arp -n $ipAddress`;
+  $lines=explode("\n", $arp);
+
+  #look for the output line describing our IP address
+  foreach($lines as $line) {
+    $cols=preg_split('/\s+/', trim($line));
+      if($cols[0]==$ipAddress)    {
+        return $cols[2];
+      }
+  }
+  return false;
 }
 
 function checkAdmin() {
@@ -54,7 +113,10 @@ function loginForm() {
   printFooter();
 }
 
-function printHeader($adminNav=false) {
+/**
+ * @param $adminType: 0 = Normal, 1 = Admin, -1 = none.
+ */
+function printHeader($adminType=false) {
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -68,11 +130,14 @@ function printHeader($adminNav=false) {
 		<img src="/logo.png" alt="Sunny+Share" title="Sunny+Share - Share Freely"/>
   </div>
   <?php
-  if($adminNav) {
+  if($adminType == 1) {
     ?><div class="nav"><a href="/admin/announce.php">Announcements</a> • <a href="/admin/net.php">Network</a> • <a href="/admin/files.php">Files</a></div><?php
-  } else {
+  } else if ($adminType == 0){
     ?><div class="topbar nav"><a href="/">Announcements</a> • <a href="/Shared/">Files</a> • <a href="/about.php">About</a></div><?php
-  }
+  } 
+  // else {
+//     // Nothing...
+//}
   
   if(isAdmin()) {?>
   <div class="topbar warn">You're logged in as <a href="/admin/">admin</a>.  <a href="/admin/?lo=1">Logout</a></div>
@@ -87,12 +152,15 @@ function printFooter() {
 </html><?php
 }
 
-function httperr($code, $text) {
+function httperr($code, $text, $continue = false) {
   // Special handling for CGI:
   header('Status: ' . $code . ' ' . $text);
-  echo $text . "\n";
   $GLOBALS['http_response_code'] = $code;
-  exit;
+  
+  if(!$continue) {
+    echo $text . "\n";
+    exit;
+  }
 }
 
 // Normalize line endings to unix format  

@@ -195,6 +195,24 @@ a#logo {
   text-decoration: none;
 }
 
+.okbtn {
+  background: #6ce62f;
+  background-image: linear-gradient(to bottom, #6ce62f, #5aa02b);
+  border-radius: 14px;
+  box-shadow: 1px 3px 5px #666666;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.okbtn:hover {
+  background: #5aa02b;
+  background-image: linear-gradient(to bottom, #5aa02b, #6ce62f);
+  text-decoration: none;
+}
+
 .topbar {
   padding: 0 2em 0 2em;
   margin:0;

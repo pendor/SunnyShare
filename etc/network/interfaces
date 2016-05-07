@@ -20,13 +20,14 @@ iface wlan0 inet static
     network 192.168.1.0
     broadcast 192.168.1.255
 
+auto eth0
 iface eth0 inet static
     address 192.168.2.1
     netmask 255.255.255.0
     network 192.168.2.0
     broadcast 192.168.2.255
 
-allow-hotplug wlan1
+auto wlan1
 iface wlan1 inet manual
 wpa-roam /etc/wpa_supplicant.conf 
 
