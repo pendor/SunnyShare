@@ -1,0 +1,2 @@
+# Allow www-data user to run admin commands for the web interface
+www-data  ALL=(ALL) NOPASSWD: /sbin/ifup --verbose wlan1, /sbin/ifdown --verbose wlan1
