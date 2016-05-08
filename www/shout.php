@@ -31,13 +31,20 @@ function drawChatBox() {
 <div class="grid" id="chat"></div>
 <script type="text/javascript">
 var refresh = <?=$chat_refreshTime?>;
+var refreshHandle = null;
 
 function postMessage() {
+  if(refreshHandle != null) {
+    window.clearInterval(refreshHandle);
+   refreshHandle = null;
+  }
+  
   var ajax = new XMLHttpRequest();
   ajax.onreadystatechange = function() {
     if(ajax.readyState == 4 && ajax.status == 200) {
       $('#message').val('');
       drawChat(JSON.parse(ajax.responseText));
+     refreshHandle = window.setInterval(fetchChat, refresh);
     }
   }
   
@@ -104,12 +111,17 @@ function drawChat(arr) {
 }
 
 function delMesg(tm, el) {
+  if(refreshHandle != null) {
+    window.clearInterval(refreshHandle);
+   refreshHandle = null;
+  }
   el.remove();
   
   var ajax = new XMLHttpRequest();
   ajax.onreadystatechange = function() {
     if(ajax.readyState == 4 && ajax.status == 200) {
       drawChat(JSON.parse(ajax.responseText));
+      refreshHandle = window.setInterval(fetchChat, refresh);
     }
   }
   
@@ -124,7 +136,7 @@ function delMesg(tm, el) {
 $('#chat').masonry({itemSelector: '.grid-item'});
 
 fetchChat();
-window.setInterval(fetchChat, refresh);
+refreshHandle = window.setInterval(fetchChat, refresh);
 </script>
 
 <?php } 
