@@ -6,6 +6,9 @@ chmod 777 /mnt/data/tmp
 mkdir -p /mnt/data/minidlna/db /mnt/data/minidlna/log
 chown -R minidlna /mnt/data/minidlna
 
+mkdir -p /mnt/data/daapd/log /mnt/data/daapd/cache/
+chown -R daapd /mnt/data/daapd
+
 mkdir -p /mnt/data/roots /mnt/data/Shared
 chown -R www-data /mnt/data/roots /mnt/data/Shared
 touch /mnt/data/Shared/.noupload
