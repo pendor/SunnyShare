@@ -131,9 +131,17 @@
       
       $dest = $settings['uploaddir'] . DIRECTORY_SEPARATOR . $filename;
       
-  		// Do now allow to overwriting files
-  		if(file_exists($dest)) {
-        httperr(401, 'File already exists');
+      $matches = array();
+      if(preg_match('/^(?:img|image)_?[0-9]*\.(jpg|jpeg|png|gif)$/i', $filename, $matches)) {
+        // iPhone always uploads a generic filename w/ no chance to rename it.
+        // Pick a unique name so we can have more than one image per folder.
+        while(file_exists($dest)) {
+          $filename = 'image_' . random_str(8, '0123456789abcdefghijklmnopqrstuvwxyz') . '.' . $matches[1];
+          $dest = $settings['uploaddir'] . DIRECTORY_SEPARATOR . $filename;
+        }
+      } else if(file_exists($dest)) {
+        // Do now allow to overwriting files
+        httperr(401, 'File already exists: [' . htmlentities($dest) . ']');
   		}
       
       if(!move_uploaded_file($data['tmp_name'], $dest)) {

@@ -123,7 +123,7 @@ function printHeader($adminType=false) {
 	<link rel="stylesheet" href="/style.css"/>
 	<title>Sunny+Share - Share Freely!</title>
 	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
-  <script src="combo.js" type="text/javascript"></script>
+  <script src="/combo.js" type="text/javascript"></script>
 </head>
 <body>
   <div id="header">
@@ -131,7 +131,7 @@ function printHeader($adminType=false) {
   </div>
   <?php
   if($adminType == 1) {
-    ?><div class="nav"><a href="/admin/announce.php">Announcements</a> • <a href="/admin/net.php">Network</a> • <a href="/admin/files.php">Files</a></div><?php
+    ?><div class="nav"><a href="/">Home</a> • <a href="/admin/announce.php">Announcements</a> • <a href="/admin/net.php">Network</a> • <a href="/admin/files.php">Files</a></div><?php
   } else if ($adminType == 0){
     ?><div class="topbar nav"><a href="/">Announcements</a> • <a href="/Shared/">Files</a> • <a href="/about.php">About</a></div><?php
   } 
@@ -184,8 +184,7 @@ function FormatSize($bytes) {
 	return ceil($bytes) . ' ' . $units[$pow];
 }
 
-function random_str($length) {
-  $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+function random_str($length, $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
   $str = '';
   $max = strlen($keyspace) - 1;
   for($i = 0; $i < $length; ++$i) {
