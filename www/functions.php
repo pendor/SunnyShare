@@ -131,7 +131,7 @@ function printHeader($adminType=false) {
   </div>
   <?php
   if($adminType == 1) {
-    ?><div class="nav"><a href="/">Home</a> • <a href="/admin/announce.php">Announcements</a> • <a href="/admin/net.php">Network</a> • <a href="/admin/files.php">Files</a></div><?php
+    ?><div class="nav"><a href="/admin/">Admin Home</a> • <a href="/admin/announce.php">Announcements</a> • <a href="/admin/net.php">Network</a> • <a href="/admin/files.php">Files</a> :: <a href="/">Exit Admin</a></div><?php
   } else if ($adminType == 0){
     ?><div class="topbar nav"><a href="/">Announcements</a> • <a href="/Shared/">Files</a> • <a href="/about.php">About</a></div><?php
   } 
@@ -140,7 +140,7 @@ function printHeader($adminType=false) {
 //}
   
   if(isAdmin()) {?>
-  <div class="topbar warn">You're logged in as <a href="/admin/">admin</a>.  <a href="/admin/?lo=1">Logout</a></div>
+  <div class="topbar warn">You're logged in as admin.  <a href="/admin/?lo=1">Logout</a></div>
   <?php } ?>
 
   <div id="content"><?php
