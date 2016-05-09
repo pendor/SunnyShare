@@ -15,19 +15,16 @@ printHeader(true);
 if(isset($_SESSION['rd']) && $_SESSION['rd'] == '1') {
   unset($_SESSION['rd']);
 
-  echo '<h2>Reassociating WiFi...</h2>';
-  
-  $out = `/usr/bin/sudo /sbin/ifdown --verbose wlan1 2>&1`;
-  echo '<pre>' . $out . '</pre>';
-  
+  echo '<h2>Bringing WiFi down...</h2><pre>';
+  passthru('/usr/bin/sudo /sbin/ifdown wlan1 2>&1');
   sleep(2);
   
-  $out = `/usr/bin/sudo /sbin/ifup --verbose wlan1 2>&1`;
-  echo '<pre>' . $out . '</pre>';
+  echo '</pre><hr/><h2>Bringing WiFi back up...</h2><pre>';
   
+  $out = passthru('/usr/bin/sudo /sbin/ifup wlan1 2>&1');
   sleep(2);
   
-  echo '<span>Refresh in a few seconds to check DHCP results.</span><br/>';
+  echo '</pre><hr/><span>Refresh in a few seconds to check DHCP results.</span><hr/>';
 } else {
   echo '<a class="delbtn" href="?r=1">Reassociate WiFi</a>';
 }
