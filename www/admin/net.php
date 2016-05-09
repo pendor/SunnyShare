@@ -33,6 +33,8 @@ if(isset($_SESSION['rd']) && $_SESSION['rd'] == '1') {
 }
 ?>
   
+  <b>HW Temp:</b> <?= getHwTemp() ?> ºC<br/>
+  
   <h1>Network Info:</h1>
   <b>Client MAC:</b> <?= getClientMac() ?><br/>
   

@@ -348,4 +348,11 @@ function rmrf($dir) {
   }
   return rmdir($dir);
 } 
+
+function getHwTemp() {
+  $t = file_get_contents('/sys/devices/virtual/thermal/thermal_zone0/temp');
+  $tdec = ((int)$t) / 1000;
+  return $tdec;
+}
+
 ?>
