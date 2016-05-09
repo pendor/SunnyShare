@@ -6,7 +6,7 @@ checkAdmin();
   
 if(isset($_GET['m']) && isset($_GET['t']) && isset($_GET['h']) && $_GET['m'] == 'd') {
   chat_delMessageHash($_GET['h'], $_GET['t']);
-  header('Location: /admin/');
+  header('Location: /admin/announce.php');
 }
 
 printHeader(true);

@@ -30,7 +30,7 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   } else {
     die('Bad action');
   }
-  header('Location: /admin/');
+  header('Location: /admin/files.php');
 } else if(isset($_GET['f']) && isset($_GET['p'])) {
   $fn = $_GET['p'];
   if(strpos($fn, '..') !== false) {
@@ -44,7 +44,7 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   } else {
     die('Bad action');
   }
-  header('Location: /admin/');
+  header('Location: /admin/files.php');
 }
 printHeader(true);
 ?>
