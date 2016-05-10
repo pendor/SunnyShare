@@ -30,6 +30,7 @@ function drawChatBox() {
 ?>
 <div class="grid" id="chat"></div>
 <script type="text/javascript">
+var cacheCount = 1;
 var refresh = <?=$chat_refreshTime?>;
 var refreshHandle = null;
 
@@ -44,7 +45,8 @@ function postMessage() {
     if(ajax.readyState == 4 && ajax.status == 200) {
       $('#message').val('');
       drawChat(JSON.parse(ajax.responseText));
-     refreshHandle = window.setInterval(fetchChat, refresh);
+      cacheCount++;
+      refreshHandle = window.setInterval(fetchChat, refresh);
     }
   }
   
@@ -63,7 +65,7 @@ function fetchChat() {
     }
   };
 
-  xmlhttp.open('GET', "/<?= pathinfo($chat_dataFile, PATHINFO_BASENAME) ?>");
+  xmlhttp.open('GET', "/<?= pathinfo($chat_dataFile, PATHINFO_BASENAME) ?>?c=" + cacheCount);
   xmlhttp.send();
 }
 
@@ -121,6 +123,7 @@ function delMesg(tm, el) {
   ajax.onreadystatechange = function() {
     if(ajax.readyState == 4 && ajax.status == 200) {
       drawChat(JSON.parse(ajax.responseText));
+      cacheCount++;
       refreshHandle = window.setInterval(fetchChat, refresh);
     }
   }
