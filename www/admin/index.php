@@ -9,6 +9,11 @@ printHeader(true);
 
 <div class="box">Admin Area</div>
 
+<h1>Network Info</h1>
+<pre><?= `ifconfig wlan1 | grep -A1 wlan1`?></pre>
+<pre><?= `iwconfig wlan1 | grep wlan1`?></pre>
+<hr/>
+
 <h1>Recent Uploads</h1>
 <ul>
 <?php
