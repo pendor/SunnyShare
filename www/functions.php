@@ -140,7 +140,7 @@ function printHeader($adminType=false) {
 //}
   
   if(isAdmin()) {?>
-  <div class="topbar warn">You're logged in as admin.  <a href="/admin/?lo=1">Logout</a></div>
+  <div class="topbar warn">You're logged in as admin.  <a href="/admin/?lo=1">Logout</a> :: <a href="/admin/">Admin Home</a></div>
   <?php } ?>
 
   <div id="content"><?php
