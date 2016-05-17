@@ -104,7 +104,7 @@ function printWelcome() {
   </p>
   
   <h2>You can come back here later by connecting to this WiFi and going to 
-    <a href="http://<?= $domainName ?>/">http://<?= $domainName ?>e/</a>.</h2>
+    <a href="http://<?= $domainName ?>/">http://<?= $domainName ?>/</a>.</h2>
 </div>
   
   <?php

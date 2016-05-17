@@ -2,10 +2,22 @@
 #
 # rc.local
 
+# Save some power:
+# Disable HDMI
+/usr/bin/tvservice -o
+
+# Set the Pi Zero ACT LED trigger to 'none'.
+echo none | sudo tee /sys/class/leds/led0/trigger
+
+# Turn off the Pi Zero ACT LED.
+echo 1 | sudo tee /sys/class/leds/led0/brightness
+
 # http://wx.w0chp.net/setup/RPi2-B_RTC.html
 echo ds1307 0x68 | tee /sys/class/i2c-adapter/i2c-1/new_device
 hwclock --hctosys --utc
 
-systemctl enable setup-data.service
+# Hopefully we've got stuff mounted.  
+# Create initial directories if they're not there.
+/etc/setup-data.sh
 
 exit 0
