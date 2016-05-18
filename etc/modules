@@ -6,3 +6,7 @@
 8812au
 8192cu
 
+i2c-bcm2708
+i2c-dev
+
+bcm2835_wdt

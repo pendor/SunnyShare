@@ -1,0 +1,17 @@
+# /lib/systemd/system/rtc-i2c.service
+[Unit]
+Description=Initialize i2c hardware RTC device driver
+DefaultDependencies=no
+Requires=systemd-modules-load.service
+After=systemd-modules-load.service
+Before=sysvinit.target
+ConditionPathExists=/sys/class/i2c-adapter/i2c-1/new_device
+Conflicts=shutdown.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c "echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device"
+
+[Install]
+WantedBy=sysinit.target
