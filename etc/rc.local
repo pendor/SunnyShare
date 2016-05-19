@@ -12,10 +12,4 @@ echo none | sudo tee /sys/class/leds/led0/trigger
 # Turn off the Pi Zero ACT LED.
 echo 1 | sudo tee /sys/class/leds/led0/brightness
 
-if ! ifconfig wlan1 && [ ! -f /nowan1 ]; then
-  echo "No wan1 interface.  Rebooting in 10..."
-  sleep 10
-  shutdown -r now
-fi
-
 exit 0
