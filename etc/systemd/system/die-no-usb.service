@@ -1,12 +1,12 @@
 [Unit]
 Description=Reboot if USB is fscked
-DefaultDependencies=no
 After=systemd-modules-load.service
-Before=syslog.socket
+DefaultDependencies=no
+Before=networking.service
  
 [Service]
 Type=oneshot
 ExecStart=/etc/usb-or-bust.sh
  
 [Install]
-WantedBy=syslog.socket
+WantedBy=networking.service
