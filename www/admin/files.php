@@ -95,7 +95,7 @@ function printFiles($path, $level) {
         }
 
         echo '<span style="padding-left: ' . $spaces . 'px;"><span style="font-size: 150%; line-height: 0;">&#8594;</span> ' . 
-          '<a href="Shared/' . $trimname . '">' .
+          '<a href="/Shared/' . $trimname . '">' .
           $file . '</a> :: <a onclick="return confirm(\'Are you sure you want to delete this file or directory?\')" href="?f=d&p=' . urlencode($trimname) . '">Delete</a></span><br/>';
         if(is_dir($fullpath)) {
           printFiles($fullpath, $level + 1);

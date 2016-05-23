@@ -3,10 +3,12 @@
 # This file contains the names of kernel modules that should be loaded
 # at boot time, one per line. Lines beginning with "#" are ignored.
 
-8812au
-8192cu
+g_serial
 
-i2c-bcm2708
-i2c-dev
+# 8812au
+# 8192cu
 
-bcm2835_wdt
+# i2c-bcm2708
+# i2c-dev
+
+# bcm2835_wdt

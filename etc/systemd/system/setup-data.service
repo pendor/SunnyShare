@@ -5,7 +5,7 @@ Requires=mnt-data.mount
 After=mnt-data.mount
 
 [Service]
-ExecStart=/etc/setup-data.sh
+ExecStart=/etc/bin/setup-data.sh
 
 [Install]
 WantedBy=mnt-data.mount

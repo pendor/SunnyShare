@@ -14,4 +14,8 @@ fi
 # CHIP:
 PKGS="joe lighttpd firmware-realtek dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
 
-ssh "$1" 'apt-get update && apt-get install $PKGS'
+ssh "$1" 'apt-get update && apt-get install $PKGS ; chown -R www-data:www-data /var/www'
+
+
+
+SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd php5-fpm"

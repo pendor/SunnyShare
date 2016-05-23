@@ -14,6 +14,9 @@ printHeader(true);
 <pre><?= `iwconfig wlan1 | grep wlan1`?></pre>
 <hr/>
 
+<h1>Hardware Info:</h1>
+<pre><?= `/etc/bin/chiptemp.sh`?></pre>
+
 <h1>Recent Uploads</h1>
 <ul>
 <?php

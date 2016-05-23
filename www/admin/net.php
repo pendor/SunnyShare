@@ -15,13 +15,16 @@ printHeader(true);
 if(isset($_SESSION['rd']) && $_SESSION['rd'] == '1') {
   unset($_SESSION['rd']);
 
-  echo '<h2>Bringing WiFi down...</h2><pre>';
-  passthru('/usr/bin/sudo /sbin/ifdown wlan1 2>&1');
-  sleep(2);
+  // echo '<h2>Bringing WiFi down...</h2><pre>';
+  // passthru('/usr/bin/sudo /sbin/ifdown wlan1 2>&1');
+  // sleep(2);
+  //
+  // echo '</pre><hr/><h2>Bringing WiFi back up...</h2><pre>';
+  //
+  // $out = passthru('/usr/bin/sudo /sbin/ifup wlan1 2>&1');
+  // sleep(2);
   
-  echo '</pre><hr/><h2>Bringing WiFi back up...</h2><pre>';
-  
-  $out = passthru('/usr/bin/sudo /sbin/ifup wlan1 2>&1');
+  passthru('/usr/bin/sudo /etc/bin/drop-local-wifi.sh 2>&1');
   sleep(2);
   
   echo '</pre><hr/><span>Refresh in a few seconds to check DHCP results.</span><hr/>';
