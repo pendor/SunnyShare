@@ -10,7 +10,7 @@ Conflicts=shutdown.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/sbin/hwclock --hctosys --utc
+ExecStart=/etc/bin/hwclock.sh
 
 [Install]
 WantedBy=sysinit.target

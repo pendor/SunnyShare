@@ -2,4 +2,4 @@
 www-data  ALL=(ALL) NOPASSWD: /sbin/ifup wlan1, /sbin/ifdown wlan1
 
 www-data  ALL=(ALL) NOPASSWD: /etc/bin/drop-local-wifi.sh
-
+www-data  ALL=(ALL) NOPASSWD: /etc/bin/chiptemp.sh

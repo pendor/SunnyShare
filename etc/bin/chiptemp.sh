@@ -2,7 +2,7 @@
 
 # Enable all voltage / current monitors if not already.
 if [ `i2cget -y -f 0 0x34 0x82` != "0xff" ] ; then
-	i2cset -y -f 0 0x34 0x82 0xFF
+	i2cset -y -f 0 0x34 0x82 0xff
 fi
 
 # From: http://linux-sunxi.org/AXP209
@@ -78,9 +78,9 @@ fah=`echo $cel | awk '{printf("%.2f", ($1 * 1.8) + 32)}'`
 POWER_STATUS=`i2cget -y -f 0 0x34 0x00`
 
 ACIN_PRESENT=`getBit $POWER_STATUS 7`
-ACIN_AVAIL=`getBit $POWER_STATUS 6`
+#ACIN_AVAIL=`getBit $POWER_STATUS 6`
 USB_PRESENT=`getBit $POWER_STATUS 5`
-USB_AVAIL=`getBit $POWER_STATUS 4`
+#USB_AVAIL=`getBit $POWER_STATUS 4`
 BAT_STATUS=`getBit $POWER_STATUS 2`
 
 
@@ -112,9 +112,6 @@ BATT_VOLT=`readVoltage 0x78 0x78 1.1`
 
 ACIN_CUR=`readCurrent 0x59 0x58 0.625`
 USB_CUR=`readCurrent 0x5d 0x5c 0.375`
-BATT_DRAIN_CUR=`readCurrent 0x7b 0x7a 0.5`
-BATT_CHARGE_CUR=`readCurrent 0x7d 0x7c 0.5`
-
 
 if [ $OVERTEMP == 1 ] ; then
 	TEMP="Too Hot"
@@ -124,15 +121,13 @@ fi
 
 if [ $BAT_STATUS == 0 ] ; then
 	BATDIR="Discharging"
-	BATCUR=$BAT_DRAIN_CUR
+	BATCUR=`readCurrent 0x7b 0x7a 0.5`
 else
 	BATDIR="Charging"
-	BATCUR=$BAT_CHARGE_CUR
+	BATCUR=`readCurrent 0x7d 0x7c 0.5`
 fi
 
-echo "Ext Power : Status: $ACIN_PRESENT || Available: $ACIN_AVAIL"
-echo "			: $ACIN_VOLT mv @ $ACIN_CUR mA"
-echo "USB Power : Status: $USB_PRESENT || Available: $USB_AVAIL"
-echo "			: $USB_VOLT mv @ $USB_CUR mA"
+echo "Ext Power : Status: $ACIN_PRESENT :: $ACIN_VOLT mv @ $ACIN_CUR mA"
+echo "USB Power : Status: $USB_PRESENT :: $USB_VOLT mv @ $USB_CUR mA"
 echo "Battery   : $BATDIR @ $BATCUR mA"
 echo "PMU Temp  : $cel°C / $fah°F ($TEMP)"

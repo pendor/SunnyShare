@@ -15,7 +15,7 @@ printHeader(true);
 <hr/>
 
 <h1>Hardware Info:</h1>
-<pre><?= `/etc/bin/chiptemp.sh`?></pre>
+<pre><?= `/usr/bin/sudo /etc/bin/chiptemp.sh`?></pre>
 
 <h1>Recent Uploads</h1>
 <ul>

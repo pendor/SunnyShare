@@ -4,6 +4,7 @@
 # at boot time, one per line. Lines beginning with "#" are ignored.
 
 g_serial
+rtc-ds1307
 
 # 8812au
 # 8192cu
