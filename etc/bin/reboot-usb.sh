@@ -1,12 +1,6 @@
 #!/bin/bash
 # Power cycle USB
 
-# Set over-heat shutdown on the PMC:
-
-if [ `i2cget -y -f 0 0x34 0x8f` != "0x23" ] ; then
-	i2cset -y -f 0 0x34 0x8f 0x23
-fi
-
 PIN=132
 GPIO=/sys/class/gpio
 
@@ -30,10 +24,14 @@ if [ `cat $GPIO/gpio$PIN/direction` != "out" ] ; then
 	echo out > $GPIO/gpio$PIN/direction
 fi
 
-if [ `cat $GPIO/gpio$PIN/value` != "1" ] ; then
+if [ `cat $GPIO/gpio$PIN/value` == "1" ] ; then
 	echo 0 > $GPIO/gpio$PIN/value
 	sleep 3
 fi
 
 echo 1 > $GPIO/gpio$PIN/value
-sleep 3
+
+# Set over-heat shutdown on the PMC:
+if [ `i2cget -y -f 0 0x34 0x8f` != "0x23" ] ; then
+	i2cset -y -f 0 0x34 0x8f 0x23
+fi

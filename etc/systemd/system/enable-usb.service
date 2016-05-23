@@ -1,7 +1,7 @@
 [Unit]
 Description=Enable power to USB bus
-After=systemd-remount-fs.service
-Before=networking.service
+DefaultDependencies=no
+Before=systemd-remount-fs.service
 
 [Service]
 Type=oneshot
@@ -9,5 +9,4 @@ RemainAfterExit=yes
 ExecStart=/etc/bin/reboot-usb.sh
 
 [Install]
-WantedBy=networking.service
-Wants=systemd-remount-fs.service
+WantedBy=systemd-remount-fs.service networking.service
