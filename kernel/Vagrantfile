@@ -1,0 +1,25 @@
+Vagrant.configure(2) do |config|
+  config.vm.box = "debian/contrib-jessie64"
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+  config.vm.synced_folder ".", "/vagrant_data"
+
+  config.vm.provider "virtualbox" do |vb|
+     vb.memory = "2048"
+     vb.cpus = 2
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    /bin/echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
+    curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
+    dpkg --add-architecture armhf
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install \
+      crossbuild-essential-armhf joe git build-essential fakeroot kernel-package zlib1g-dev libncurses5-dev \
+      lzop gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
+  SHELL
+end

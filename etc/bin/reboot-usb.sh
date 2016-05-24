@@ -16,7 +16,7 @@ if grep -q /mnt/data /proc/mounts ; then
 	fi
 fi
 
-if [ ! -f $GPIO/gpio$PIN ] ; then
+if [ ! -d $GPIO/gpio$PIN ] ; then
 	echo $PIN > $GPIO/export
 fi
 
