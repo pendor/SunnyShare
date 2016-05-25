@@ -24,14 +24,14 @@ if [ `cat $GPIO/gpio$PIN/direction` != "out" ] ; then
 	echo out > $GPIO/gpio$PIN/direction
 fi
 
-if [ `cat $GPIO/gpio$PIN/value` == "1" ] ; then
-	echo 0 > $GPIO/gpio$PIN/value
-	sleep 3
-fi
-
+# Seems like boot up floats the power line & stuff gets whacked.
+# Make sure we're completely off for a few seconds, then start clean.
+echo 0 > $GPIO/gpio$PIN/value
+sleep 3
 echo 1 > $GPIO/gpio$PIN/value
+sleep 3
 
 # Set over-heat shutdown on the PMC:
-if [ `i2cget -y -f 0 0x34 0x8f` != "0x23" ] ; then
-	i2cset -y -f 0 0x34 0x8f 0x23
-fi
+# if [ `i2cget -y -f 0 0x34 0x8f` != "0x23" ] ; then
+# 	i2cset -y -f 0 0x34 0x8f 0x23
+# fi
