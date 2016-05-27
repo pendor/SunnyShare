@@ -1,5 +1,5 @@
 <?php
-require_once 'random_compat.phar';
+# require_once 'random_compat.phar';
 require_once('config.php');
 
 if(!isset($no_mac_register)) {
