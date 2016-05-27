@@ -1,0 +1,10 @@
+kernel=uboot.bin
+
+arm_freq=800
+gpu_mem=32
+
+dtparam=audio=off
+dtparam=i2c_arm=on
+dtparam=spi=on
+dtparam=watchdog=on
+dtoverlay=i2c-rtc,ds1307=1
