@@ -17,11 +17,11 @@ if [[ "$status_battery_connected" == "1" ]]; then
         battery_percent=$(cat $axp_dir/battery/capacity)
         # dispay charging / percentage
 	if [[ "$status_ac_connect" == "1" ]]  && [ "1" == $status_battery_charging ] ; then
-		status_battery_text=" charging"
+		status_battery_text="Charging ${battery_percent}%"
 	elif [[ "$status_ac_connect" == "1" ]] && [ "0" == $status_battery_charging ] ; then
-		status_battery_text=" charged"
+		status_battery_text="Charged"
 	else
-		status_battery_text=" discharging"
+		status_battery_text="Discharging ${battery_percent}%"
 	fi
 fi
 
@@ -65,8 +65,7 @@ else
 fi
 
 if [ "1" == `cat $axp_dir/battery/connected` ] ; then
-	echo "Battery  : Available ::" `awk '{printf("%.2f", $1 / 1000000)}' < /sys/power/axp_pmu/battery/voltage` " V @" `awk '{printf("%.2f", $1 / 1000)}' < /sys/power/axp_pmu/battery/amperage` "mA"
-	echo "         : $battery_percent % $status_battery_text"
+	echo "Battery  : $status_battery_text ::" `awk '{printf("%.2f", $1 / 1000000)}' < /sys/power/axp_pmu/battery/voltage` " V @" `awk '{printf("%.2f", $1 / 1000)}' < /sys/power/axp_pmu/battery/amperage` "mA"
 else
 	echo "Battery  : Not available" 
 fi

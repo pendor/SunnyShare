@@ -16,14 +16,8 @@ printHeader(true);
 
 <h1>Hardware Info:</h1>
 <pre><?= `/usr/bin/sudo /etc/bin/chiptemp.sh` ?></pre>
+<pre><?= `/usr/bin/sudo /etc/bin/bananatemp.sh` ?></pre>
 <b>Uptime:</b><pre><?=`uptime`?></pre><br/>
-<b>Board Temp:</b><?=`awk '{printf("%d",$1/1000)}' </sys/devices/virtual/thermal/thermal_zone0/temp`?>ºC<br/>
-
-<?php
-	$sysinfo = `/etc/update-motd.d/30-sysinfo`
-	
-	
-?>
 
 <h1>Recent Uploads</h1>
 <ul>

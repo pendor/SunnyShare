@@ -40,7 +40,7 @@ echo "Script running on box :: Phase $1 ..."
 
 
 # Armbian Banana-Pi
-PKGS="joe watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
+PKGS="joe ntpdate watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
 
 if [ "z$1" == "zinstall" ] ; then
 	echo "Installing packages..."
