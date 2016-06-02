@@ -50,19 +50,19 @@
   	httperr(403, 'Bad upload path (not directory): ' . $path);
   }
   
-  $canupload = !is_file($path . '/.noupload');
+  $canupload = !is_file($path . '/' . TAG_NOUPLOAD);
 
 	$settings = array(
 		'uploaddir'         => $path,
     'urlpath'           => $urlPath,
 		'ignores'           => array( 
       '.', 'LICENSE', 'README.md', 'README.txt', 
-      'readme.txt', '.noupload',
+      'readme.txt', TAG_NOUPLOAD,
       pathinfo(__FILE__, PATHINFO_BASENAME) 
     ),
 		'badext'            => array( 
       'php', 'php3', 'php4', 'php5', 'pl', 
-      'cgi', 'sh', 'noupload' 
+      'cgi', 'sh', substr(TAG_NOUPLOAD, 1) 
     ),
   );
   

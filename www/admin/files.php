@@ -12,6 +12,7 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   }
   
   $enPath = $files_libraryEnabled . DIRECTORY_SEPARATOR . $fn;
+  $noUpPath = $files_libraryRoots . DIRECTORY_SEPARATOR . $fn . DIRECTORY_SEPARATOR . TAG_NOUPLOAD;
   $rPath =  $files_libraryRoots . DIRECTORY_SEPARATOR . $fn;
   if($_GET['r'] == 'd') {
     if(is_dir($rPath) && is_link($enPath)) {
@@ -25,6 +26,10 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
     } else {
       die('Already linked or not dir');
     }
+  } else if($_GET['r'] == 'du') {
+    touch($noUpPath);
+  } else if($_GET['r'] == 'eu') {
+    unlink($noUpPath);
   } else if($_GET['r'] == 'c') {
     mkdir($rPath, 0755, true);
   } else {
@@ -54,9 +59,17 @@ printHeader(true);
       <input type="hidden" name="r" value="c"/>
       <input type="text" name="p"/><input type="submit" value="Create New Root"/>
     </form>
-    <ol>
+    <table border="1" style="border-collapse: collapse;">
+      <thead style="padding: 2px;">
+      <tr>
+        <th>Name</th>
+        <th>Visible?</th>
+        <th>Uploads?</th>
+      </tr>
+      </thead>
+      <tbody>
 <?php
-
+  
 	foreach(new FilesystemIterator($files_libraryRoots) as $path => $dirent) {
     if(!$dirent->isDir()) {
       continue;
@@ -64,19 +77,31 @@ printHeader(true);
     
     $filename = $dirent->getBasename();
     $link = is_link($files_libraryEnabled . DIRECTORY_SEPARATOR . $filename);
+    $upload = !file_exists($files_libraryRoots . DIRECTORY_SEPARATOR . $filename . DIRECTORY_SEPARATOR . TAG_NOUPLOAD);
 
-    echo '<li>' . htmlentities($filename) . ': ';
-    
+    echo '<tr><th style="padding: 2px;">' . htmlentities($filename) . '</th>';
+
+    // FIXME: Style is bad.  Make background color, text black, entire cell is link, click to toggle
+    echo '<td>';
     if($link) {
-      // It's enabled already.
-      echo '<span style="color: green;">ENABLED</span> | <a href="?r=d&p=' . urlencode($filename) . '">Disable</a>';
+      echo '<a class="toggle-yes" href="?r=d&p=' . urlencode($filename) . '">Yes</a>';
     } else {
-      echo '<span style="color: red;">DISABLED</span> | <a href="?r=e&p=' . urlencode($filename) . '">Enable</a>';
+      echo '<a class="toggle-no" href="?r=e&p=' . urlencode($filename) . '">No</a>';
     }
-    echo '</li>';
+    echo '</td>';
+
+    echo '<td>';
+    if($upload) {
+      echo '<a class="toggle-yes" href="?r=du&p=' . urlencode($filename) . '">Yes</a>';
+    } else {
+      echo '<a class="toggle-no" href="?r=eu&p=' . urlencode($filename) . '">No</a>';
+    }
+    echo '</td>';
+    echo '</tr>' . "\n";
   }
 ?>
-    </ol>
+    </tbody>
+    </table>
     <hr/>
     
     <h1>Files</h1>

@@ -231,3 +231,26 @@ a#logo {
 .nav a {
   color: #be0417;
 }
+
+
+a.toggle-yes {
+  text-align: center;
+  display: block; 
+  background-color: green; 
+  color: black;
+}
+
+a.toggle-yes:hover {
+  background-color: darkgreen; 
+}
+
+a.toggle-no {
+  text-align: center;
+  display: block; 
+  background-color: red; 
+  color: black;
+}
+
+a.toggle-no:hover {
+  background-color: darkred; 
+}

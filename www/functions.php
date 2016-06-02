@@ -1,5 +1,7 @@
 <?php
 
+define("TAG_NOUPLOAD", ".noupload");
+
 $ver = explode('.', phpversion());
 if($ver[0] < 7) {
 	require_once 'random_compat.phar';
