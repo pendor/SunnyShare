@@ -1,0 +1,9 @@
+[Unit]
+Description=Configure ax20x PMU
+After=mnt-data.mount
+
+[Service]
+ExecStart=/etc/bin/config-axp20x.sh
+
+[Install]
+WantedBy=mnt-data.mount

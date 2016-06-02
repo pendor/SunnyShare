@@ -10,6 +10,64 @@ if [ ! -d $axp_dir ] ; then
 	exit 0
 fi
 
+function getBit() {
+	local val=$1
+	local bit=$2
+	
+	local bval=$((1 << $bit))
+	echo $(( ($val & $bval) / $bval ))
+}
+
+CCREG=`i2cget -y -f 0 0x34 0x33`
+
+# Charge enabled
+CCB7=`getBit $CCREG 7`
+
+# Voltage
+CCB6=`getBit $CCREG 6`
+CCB5=`getBit $CCREG 5`
+
+# 0 = 10%, 1 = 15% tolerance on charge cutoff
+CCB4=`getBit $CCREG 4`
+
+# Charge current
+CCB3=`getBit $CCREG 3`
+CCB2=`getBit $CCREG 2`
+CCB1=`getBit $CCREG 1`
+CCB0=`getBit $CCREG 0`
+
+CCAMPS=$(( 300 + (((CCB3 << 3) + (CCB2 << 2) + (CCB1 << 1) + CCB0) * 100) ))
+
+
+if [ $CCB6 == 1 ] ; then
+  if [ $CCB5 == 1 ] ; then
+    CCV=4.36
+  else
+    CCV=4.2
+  fi
+else
+  if [ $CCB5 == 1 ] ; then
+    CCV=4.15
+  else
+    CCV=4.1
+  fi
+fi
+
+if [ $CCB7 == 1 ] ; then
+  CCEN="Charge enabled"
+else
+  CCEN="Charge disabled"
+fi
+
+if [ $CCB4 == 0 ] ; then
+  CCTOL="±10%"
+else
+  CCTOL="±15%"
+fi
+
+# i2cset -y -f 0 0x34 0x33 0xc9 ==> 1200mA
+# i2cset -y -f 0 0x34 0x33 0xcf ==> 1800mA
+
 status_battery_connected=$(cat $axp_dir/battery/connected)
 if [[ "$status_battery_connected" == "1" ]]; then
         status_battery_charging=$(cat $axp_dir/charger/charging)
@@ -66,6 +124,7 @@ fi
 
 if [ "1" == `cat $axp_dir/battery/connected` ] ; then
 	echo "Battery  : $status_battery_text ::" `awk '{printf("%.2f", $1 / 1000000)}' < /sys/power/axp_pmu/battery/voltage` " V @" `awk '{printf("%.2f", $1 / 1000)}' < /sys/power/axp_pmu/battery/amperage` "mA"
+  echo "  Charge : $CCV V $CCTOL @ $CCAMPS mA ($CCEN)"
 else
 	echo "Battery  : Not available" 
 fi
