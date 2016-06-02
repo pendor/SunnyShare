@@ -13,6 +13,18 @@ mkdir -p /mnt/data/roots /mnt/data/Shared
 chown -R www-data /mnt/data/roots /mnt/data/Shared
 touch /mnt/data/Shared/.noupload
 
+if [ ! -f /mnt/data/chat.json ] ; then
+	echo '[{"t":1464738789,"n":"Sunny+Share","m":"If you have any suggestions for improving this service, please leave a note here.","c":"#B68CC2","i":"ae9467c203025852b98353a03da4abe25460de70"}]' \
+		> /mnt/data/chat.json
+	chown www-data /mnt/data/chat.json
+	rm -f /var/www/html/chat.json
+fi
+
+if [ ! -L /var/www/html/chat.json ] ; then
+	rm -f /var/www/html/chat.json
+	ln -s /mnt/data/chat.json /var/www/html/chat.json
+fi
+
 cat > /mnt/data/Shared/readme.txt <<EOF
 This file sharing area allows you to upload things others might find interesting.  
 You can upload images, videos, music, books, writings, pretty much anything.
@@ -26,3 +38,5 @@ On iPhone, try OPlayer: https://itunes.apple.com/us/app/video-player-oplayer-cla
 On other platforms, search your app store for "upnp"
 EOF
 
+find /mnt/data -name ._\* -delete
+find /mnt/data -name .DS_Store -delete

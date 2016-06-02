@@ -1,5 +1,12 @@
-LABEL=cloudimg-rootfs	/	 ext4	noatime	0 0
-LABEL=system-boot       /boot/firmware  vfat    noauto,noatime        	0       1
+# Ubuntu on RPi / ARMv7:
+# LABEL=cloudimg-rootfs	/	 ext4	noatime	0 0
+# LABEL=system-boot       /boot/firmware  vfat    noauto,noatime        	0       1
 
-# LABEL=swap		swap		swap	auto,nofail			  0 	0
-LABEL=data		/mnt/data	ext4	auto,nofail,noatime	  0 	0
+# Banana Pi:
+/dev/mmcblk0p1 / ext4 defaults,noatime,nodiratime,commit=600,errors=remount-ro 0 1
+tmpfs /tmp tmpfs defaults,rw,nosuid 0 0
+/var/swap none swap sw 0 0
+
+
+# Everything:
+LABEL=data		/mnt/data	ext4	auto,nofail,noatime,sync,barrier=1,commit=1,data=ordered,data_err=abort	  0 	0

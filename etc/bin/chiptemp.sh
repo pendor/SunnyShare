@@ -1,5 +1,15 @@
 #!/bin/bash
 
+if [ -d /sys/power/axp_pmu ] ; then
+	# Use bananatemp.sh instead.
+	exit 0
+fi
+
+if [ ! -e /sys/bus/i2c/drivers/axp20x/0-0034 ] ; then
+	echo "Hardware info not available on this platform."
+	exit 0
+fi
+
 # Enable all voltage / current monitors if not already.
 if [ `i2cget -y -f 0 0x34 0x82` != "0xff" ] ; then
 	i2cset -y -f 0 0x34 0x82 0xff

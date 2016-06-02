@@ -1,5 +1,9 @@
 <?php
-# require_once 'random_compat.phar';
+
+$ver = explode('.', phpversion());
+if($ver[0] < 7) {
+	require_once 'random_compat.phar';
+}
 require_once('config.php');
 
 if(!isset($no_mac_register)) {
@@ -253,6 +257,12 @@ function chat_addMessage($name, $message, $secId) {
   
   $time = time();
   $delHash = sha1($secId . $time);
+  
+  if(!file_exists($chat_dataFile)) {
+	  $h = fopen($chat_dataFile, 'w');
+		fwrite($h, '[]');
+		fclose($h);
+  }
   
   $fp = fopen($chat_dataFile, 'r+');
   if(flock($fp, LOCK_EX)) {  // acquire an exclusive lock
