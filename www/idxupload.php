@@ -16,8 +16,32 @@
   
   require_once('functions.php');
   require_once('config.php');
-	
-  if(isset($_FILES['file'])) {
+  
+  if(isset($_GET['a']) && $_GET['a'] == 'r') {
+    // User reported a file.  Set the attribute to hide it.
+    $repFile = rtrim(ltrim($_GET['p'], '/'), '/');
+    if(strpos($repFile, '..') !== FALSE) {
+      httperr(403, 'Bad upload path - no double dots allowed in filename');
+    }
+    $path = $files_upRoot . '/' . $repFile;
+    $att = getXattr($path);
+    if($att == XA_APPROVED) {
+      httperr(403, 'File has been moderated safe.  No further reports accepted.');
+    } 
+    
+    // FIXME: Check for noupload file in parent dir - don't allow reports where you can't upload.
+    $tag = dirname($path) . DIRECTORY_SEPARATOR . TAG_NOUPLOAD;
+    if(file_exists($tag)) {
+      httperr(403, 'Directory does not accept uploads.  No reports accepted.');
+    }
+    
+    setXattr($path, XA_REPORTED);
+    
+    list($urlPath) = explode('?', $_SERVER['REQUEST_URI']);
+    $urlPath = rtrim(ltrim(rawurldecode($urlPath), '/'), '/');  
+    header('Location: /' . $urlPath . '?r=1');
+    exit;
+  } else if(isset($_FILES['file'])) {
     $urlPath = rtrim(ltrim($_POST['uploaddir'], '/'), '/');
   } else {
     list($urlPath) = explode('?', $_SERVER['REQUEST_URI']);
@@ -203,11 +227,22 @@
       echo "<p>Why not be the first?</p>";
     }
   } else {
+    if(isset($_GET['r']) && $_GET['r'] == '1') {
+      echo 
+        '<div class="error">' .
+        '<a href="#" onclick="$(this).parent().hide(1000);" class="boxclose">X</a>' .
+        '<h1>File reported.</h1>' .
+        '<p>The file will be reviewed for inappropriate content.</p>' .
+        '</div>';
+    }
 		echo '<ul>';
 		foreach($file_array as $filename) {
       $fullname = $path . DIRECTORY_SEPARATOR . $filename;
+      $trimname = substr($fullname, strlen($files_upRoot));
       if($filename == '../') {
         $info = ' (Parent Directory)';
+        $xattrok = true;
+        $xattrapproved = true;
       } else if(substr($filename, -1) == '/') {
         try {
           $fi = new FilesystemIterator($fullname, FilesystemIterator::SKIP_DOTS);
@@ -215,11 +250,39 @@
         } catch(Exception $ex) {
           $info = ' (Read error)';
         }
+        $xattrok = true;
+        $xattrapproved = false;
 		  } else {
 		    $info = ' - ' . FormatSize(filesize($fullname));
+        if($canupload) {
+          $xa = getXattr($fullname);
+          if($xa === FALSE) {
+            // No report
+            $xattrok = true;
+            $xattrapproved = false;
+          } else if($xa == XA_APPROVED) {
+            // explicitly marked ok - no more reports
+            $xattrapproved = true;
+            $xattrok = true;
+          } else {
+            // Report is pending.  Hide it.
+            $xattrok = false;
+            $xattrapproved = false;
+          }
+        } else {
+          // No need to check xattr if can't upload
+          $xattrok = true;
+          $xattrapproved = false;
+        }
 		  }
-			echo '<li><a href="' . $filename . '">' . $filename . 
-			  '</a>' . $info . '</li>';
+      if($xattrok) {
+        echo '<li><a href="' . $filename . '">' . $filename . '</a>' . $info;
+        if($canupload && !$xattrapproved) {
+          // We can do uploads here, and we haven't explictly ok'd this file.  Show the report button.
+          echo '  :: <a href="?a=r&p=' . htmlentities($trimname) . '">Report File</a>';
+        }
+        echo '</li>';
+      }
 		}
 		echo '</ul>';
 	}

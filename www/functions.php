@@ -1,6 +1,9 @@
 <?php
 
-define("TAG_NOUPLOAD", ".noupload");
+define('TAG_NOUPLOAD', '.noupload');
+define('XA_REPORT', 'ssreport');
+define('XA_APPROVED', 'A');
+define('XA_REPORTED', 'R');
 
 $ver = explode('.', phpversion());
 if($ver[0] < 7) {
@@ -54,6 +57,28 @@ function isMacSet($mac) {
   }
   
   return false;
+}
+
+function getXattr($file) {
+//  return xattr_get($file, XA_REPORT);
+  // $r = rand(1,25);
+  // if($r == 2) {
+  //   return XA_REPORTED;
+  // } else if($r == 3) {
+  //   return XA_APPROVED;
+  // } else {
+  //   return FALSE;
+  // }
+  return FALSE;
+}
+
+function setXattr($file, $val) {
+  // xattr_set($file, XA_REPORT, $val);
+}
+
+function delXattr($file) {
+  // xattr_remove($file, XA_REPORT);
+  
 }
 
 function getMemcache() {
