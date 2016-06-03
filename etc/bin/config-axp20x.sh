@@ -15,10 +15,10 @@ if [ -d /sys/power/axp_pmu ] || [ -e /sys/bus/i2c/drivers/axp20x/0-0034 ] ; then
     i2cset -y -f 0 0x34 0x4a 0x03
     
     # 1200mA max charge current
-    i2cset -y -f 0 0x34 0x33 0xc9
+    # i2cset -y -f 0 0x34 0x33 0xc9
     
     # 1800mA max charge current
-    # i2cset -y -f 0 0x34 0x33 0xcf
+    i2cset -y -f 0 0x34 0x33 0xcf
   fi
   
 fi
