@@ -24,14 +24,15 @@ printHeader(true);
 <?php
   
   $out = array();
-  exec('find ' . $files_libraryRoots . ' -mtime -5 -type f', $out);
+  exec('find ' . $files_libraryRoots . ' -mtime -5 -type f -not -name ' . TAG_NOUPLOAD, $out);
   
   foreach($out as $f) {
     $fixedPath = substr($f, strlen($files_libraryRoots));
     $stat = stat($f);
     
-    echo '<li><a href="/Shared/' . $fixedPath . '">' . $fixedPath . '</a> :: '
-      . FormatSize($stat['size']) . ' :: ' . date('n/j/Y G:i:s', $stat['mtime']) . '</li>';
+    echo '<li><a href="/Shared/' . $fixedPath . '">' . $fixedPath . '</a> :: ';
+    echo '<a onclick="return confirm(\'Are you sure you want to delete this file or directory?\')" href="/admin/files.php?return=i&f=d&p=' . urlencode($fixedPath) . '">Delete</a>';
+    echo ' :: ' . FormatSize($stat['size']) . ' :: ' . date('n/j/Y G:i:s', $stat['mtime']) . '</li>';
   }
 ?>
 </ul>

@@ -3,6 +3,15 @@ require_once('../config.php');
 require_once('../functions.php');
 
 checkAdmin();
+
+function redirect() {
+  $toIndex = isset($_GET['return']) && $_GET['return'] == "i";
+  if($toIndex) {
+    header('Location: /admin/');
+  } else {
+    header('Location: /admin/files.php');
+  }
+}
   
 if(isset($_GET['r']) && isset($_GET['p'])) {
   $fn = $_GET['p'];
@@ -35,7 +44,8 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   } else {
     die('Bad action');
   }
-  header('Location: /admin/files.php');
+
+  redirect();
 } else if(isset($_GET['f']) && isset($_GET['p'])) {
   $fn = $_GET['p'];
   if(strpos($fn, '..') !== false) {
@@ -51,7 +61,8 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   } else {
     die('Bad action');
   }
-  header('Location: /admin/files.php');
+  
+  redirect();
 }
 printHeader(true);
 ?>
