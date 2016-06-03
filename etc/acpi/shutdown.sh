@@ -2,6 +2,10 @@
 
 logger "Shutdown requested at `date`.  Waiting for timeout"
 
+echo "timer" > /sys/class/leds/bananapro\:green\:usr/trigger 
+echo "100" > /sys/class/leds/bananapro\:green\:usr/delay_on
+echo "100" > /sys/class/leds/bananapro\:green\:usr/delay_off
+
 LOOP=5
 while [ $LOOP -gt 0 ] ; do
   LOOP=$((LOOP - 1))
@@ -18,3 +22,4 @@ done
 i2cset -y -f 0 0x34 0x4a 0x03
 
 logger "Didn't get long-press.  Not shutting down."
+echo "none" > /sys/class/leds/bananapro\:green\:usr/trigger 

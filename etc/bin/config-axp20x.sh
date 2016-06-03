@@ -22,3 +22,5 @@ if [ -d /sys/power/axp_pmu ] || [ -e /sys/bus/i2c/drivers/axp20x/0-0034 ] ; then
   fi
   
 fi
+
+echo "none" > /sys/class/leds/bananapro\:green\:usr/trigger

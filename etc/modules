@@ -8,6 +8,8 @@
 8812au
 # 8192cu
 
+ledtrig-timer
+
 # BananaPi
 brcmfmac
 
