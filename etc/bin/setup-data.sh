@@ -25,6 +25,18 @@ if [ ! -L /var/www/html/chat.json ] ; then
 	ln -s /mnt/data/chat.json /var/www/html/chat.json
 fi
 
+
+if [ ! -f /mnt/data/count.txt ] ; then
+	echo '[]' > /mnt/data/count.txt
+	chown www-data /mnt/data/count.txt
+	rm -f /var/www/html/count.txt
+fi
+
+if [ ! -L /var/www/html/count.txt ] ; then
+	rm -f /var/www/html/count.txt
+	ln -s /mnt/data/count.txt /var/www/html/count.txt
+fi
+
 cat > /mnt/data/Shared/readme.txt <<EOF
 This file sharing area allows you to upload things others might find interesting.  
 You can upload images, videos, music, books, writings, pretty much anything.

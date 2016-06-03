@@ -7,7 +7,7 @@ checkAdmin();
 printHeader(true);
 ?>
 
-<div class="box">Admin Area</div>
+<div class="box">Admin Area :: <b>Active Sessions:</b> <?= getActiveSessions() ?> :: <b>Assoc. Count:</b> <?= getHitCount() ?></div>
 
 <h1>Recent Uploads &amp; Attention Required</h1>
 <?php

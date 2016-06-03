@@ -40,10 +40,15 @@ if(!isset($no_mac_register)) {
     $m = getMemcache();
     if($m->get($mac) === FALSE) { 
       $m->add($mac, '1', $macCacheTtl);
+      incHitCount();
     } else {
     	$m->touch($mac, $macCacheTtl);
     }
   }
+}
+
+function getActiveSessions() {
+  return count(getMemcache()->getAllKeys());
 }
 
 function isMacSet($mac) {
@@ -267,6 +272,72 @@ function chat_readMessages() {
     fclose($fp);
   }
   return $ret;
+}
+
+function getHitCount() {
+  global $hitCountFile;
+  $ret = 0;
+  
+  $fp = fopen($hitCountFile, 'r+');
+  if(flock($fp, LOCK_EX)) {  // acquire an exclusive lock
+    $flen = filesize($hitCountFile);
+    
+    if($flen == 0) {
+      $ret = 0;
+    } else {
+      $json = fread($fp, $flen);
+      $msgs = json_decode($json, true);
+
+      if(isset($msgs['count'])) {
+        $ret = $msgs['count'];
+      } else {
+        $ret = 0;
+      }
+    }
+    
+    flock($fp, LOCK_UN);
+    fclose($fp);
+  } else {
+    // Non-fatal..
+    return 0;
+  }
+  
+  return $ret;
+}
+
+function incHitCount() {
+  global $hitCountFile;
+  $fp = fopen($hitCountFile, 'r+');
+  if(flock($fp, LOCK_EX)) {  // acquire an exclusive lock
+    $flen = filesize($hitCountFile);
+    if($flen == 0) {
+      $cur = 1;
+    } else {
+      $json = fread($fp, $flen);
+      $msgs = json_decode($json, true);
+      if(isset($msgs['count'])) {
+        $cur = $msgs['count'] + 1;
+      } else {
+        $cur = 1;
+      }
+    }
+    
+    $msgs = array(
+      'count' => $cur,
+    );
+    
+    ftruncate($fp, 0);
+    rewind($fp);
+    $newJson = json_encode($msgs);
+    fwrite($fp, $newJson);
+    fflush($fp);
+    flock($fp, LOCK_UN);
+    fclose($fp);
+  } else {
+    return 0;
+  }
+  
+  return $cur;
 }
 
 function chat_addMessage($name, $message, $secId) {
