@@ -60,25 +60,15 @@ function isMacSet($mac) {
 }
 
 function getXattr($file) {
-//  return xattr_get($file, XA_REPORT);
-  // $r = rand(1,25);
-  // if($r == 2) {
-  //   return XA_REPORTED;
-  // } else if($r == 3) {
-  //   return XA_APPROVED;
-  // } else {
-  //   return FALSE;
-  // }
-  return FALSE;
+  return xattr_get($file, XA_REPORT);
 }
 
-function setXattr($file, $val) {
-  // xattr_set($file, XA_REPORT, $val);
+function markFileReported($file) {
+  xattr_set($file, XA_REPORT, XA_REPORTED);
 }
 
-function delXattr($file) {
-  // xattr_remove($file, XA_REPORT);
-  
+function markFileApproved($file) {
+  xattr_set($file, XA_REPORT, XA_APPROVED);
 }
 
 function getMemcache() {

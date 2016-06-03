@@ -35,7 +35,7 @@
       httperr(403, 'Directory does not accept uploads.  No reports accepted.');
     }
     
-    setXattr($path, XA_REPORTED);
+    markFileReported($path);
     
     list($urlPath) = explode('?', $_SERVER['REQUEST_URI']);
     $urlPath = rtrim(ltrim(rawurldecode($urlPath), '/'), '/');  

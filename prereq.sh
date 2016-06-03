@@ -40,7 +40,7 @@ echo "Script running on box :: Phase $1 ..."
 
 
 # Armbian Banana-Pi
-PKGS="joe ntpdate acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
+PKGS="joe ntpdate php5-dev attr acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
 
 if [ "z$1" == "zinstall" ] ; then
 	echo "Installing packages..."
@@ -74,6 +74,8 @@ if [ "z$1" == "zinstall" ] ; then
 		-o Dpkg::Options::="--force-confdef" \
 		-o Dpkg::Options::="--force-confold" \
 			autoremove
+
+	pecl install xattr
 
 	echo "Cleaning up permissions..."
 	chsh -s /bin/bash www-data

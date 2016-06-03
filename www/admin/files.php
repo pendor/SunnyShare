@@ -47,7 +47,7 @@ if(isset($_GET['r']) && isset($_GET['p'])) {
   if($_GET['f'] == 'd') {
     rmrf($rPath);
   } else if($_GET['f'] == 'a') {
-    setXattr($rPath, XA_APPROVED);
+    markFileApproved($rPath);
   } else {
     die('Bad action');
   }
