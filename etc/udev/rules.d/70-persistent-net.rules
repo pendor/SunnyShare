@@ -5,9 +5,10 @@
 # line, and change only the value of the NAME= key.
 
 # USB device 0x:0x (rtl8812au)
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="04:8d:38:d6:c3:5c", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
+# SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="04:8d:38:d6:c3:5c", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
 
 # Unknown net device (/devices/platform/soc@01c00000/1c11000.mmc/mmc_host/mmc1/mmc1:0001/mmc1:0001:1/net/wlan0) (brcmfmac_sdio)
-SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="98:3b:16:c8:47:6e", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan1"
+# SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="98:3b:16:c8:47:6e", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan1"
 
-
+# USB device 0x:0x (rtl8812au)
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="04:8d:38:d6:c2:40", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
