@@ -1,0 +1,13 @@
+diff --git a/bcm2835.c b/bcm2835.c
+index 75954d7..29dfb0d 100644
+--- a/bcm2835.c
++++ b/bcm2835.c
+@@ -817,7 +817,7 @@ int bcm2835_i2c_begin(void)
+ 	int fd ;
+ 
+ #if BANANAPI
+-	if ((fd = open ("/dev/i2c-2", O_RDWR)) < 0)
++	if ((fd = open ("/dev/i2c-1", O_RDWR)) < 0)
+ #else
+ 	if ((fd = open (bcm2835_get_pi_version() == 1 ? "/dev/i2c-0":"/dev/i2c-1" , O_RDWR)) < 0)
+ #endif

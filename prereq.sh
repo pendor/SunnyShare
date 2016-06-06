@@ -9,7 +9,7 @@ fi
 
 if [ "z$UID" != "z0" ] ; then
 	echo "Copying script to box..."
-	scp $0 root@$1:/tmp/prereq.sh
+	scp $0 `basedir $0`/oled.diff root@$1:/tmp/prereq.sh
 	ssh root@$1 'chmod +x /tmp/prereq.sh'
 	
 	echo "Running package install..."
@@ -40,7 +40,7 @@ echo "Script running on box :: Phase $1 ..."
 
 
 # Armbian Banana-Pi
-PKGS="joe ntpdate php5-dev attr acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
+PKGS="joe ntpdate php5-dev python-setuptools python-dev libpython-dev attr acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
 
 if [ "z$1" == "zinstall" ] ; then
 	echo "Installing packages..."
@@ -110,6 +110,20 @@ if [ "z$1" == "zinstall" ] ; then
 	if ! `grep 8812au /etc/modules` ; then
 		echo "88128au" >> /etc/modules
 	fi
+	
+	cd /usr/src
+	export GIT_SSL_NO_VERIFY=1
+	git clone https://github.com/adafruit/Adafruit_Python_SSD1306.git
+	cd Adafruit_Python_SSD1306
+	sudo python setup.py install
+	
+	cd /usr/src
+	git clone https://github.com/hallard/ArduiPi_OLED.git
+	cd ArduiPi_OLED
+	patch -p1 < /tmp/oled.diff
+	echo 2 | ./autogen.sh
+	make
+	make install
 	
 elif [ "z$1" == "zservices" ] ; then
 	echo "Activating services..."
