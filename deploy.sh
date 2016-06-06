@@ -32,3 +32,9 @@ if [ $tgt == "all" ] || [ $tgt == "etc" ] ; then
   scp -r etc/* root@${1}:/etc/
 fi
 
+if [ $tgt == "all" ] || [ $tgt == "boot" ] ; then
+  scp -r boot/* root@${1}:/boot/
+	echo "Compiling boot files on device..."
+	ssh root@${1} 'cd /boot ; ./compile.sh'
+fi
+

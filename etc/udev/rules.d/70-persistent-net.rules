@@ -6,3 +6,6 @@
 
 # USB device 0x:0x (rtl8812au)
 SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="04:8d:38:d6:c2:40", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan0"
+
+# USB device 0x:0x (rtl8192cu)
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="74:da:38:7d:35:4c", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="wlan*", NAME="wlan1"
