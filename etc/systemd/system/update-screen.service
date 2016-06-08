@@ -1,0 +1,10 @@
+[Unit]
+Description=Update screen
+After=logo.service
+
+[Service]
+ExecStart=/etc/bin/update-screen.sh
+Restart=always
+
+[Install]
+WantedBy=logo.service

@@ -1,9 +1,9 @@
 [Unit]
-Description=Draw startup log
-After=networking.service
+Description=Show Sunny+Share Logo
+DefaultDependencies=no
+Conflicts=shutdown.target
 
 [Service]
+Type=oneshot
+RemainAfterExit=yes
 ExecStart=/usr/bin/python /etc/oled/logo.py
-
-[Install]
-WantedBy=networking.service

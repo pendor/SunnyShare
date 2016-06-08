@@ -10,7 +10,7 @@ oled = ssd1306(port=1, address=0x3C, skipinit=True)
 font = ImageFont.load_default()
 fpath = "%s/fonts/C&C Red Alert [INET].ttf" % (dirname(abspath(__file__)))
 font2 = ImageFont.truetype(fpath, 18)
-font3 = ImageFont.truetype(fpath, 24)
+font3 = ImageFont.truetype(fpath, 20)
 
 # Should get about 18 chars on line 1, 12 on lines 2 & 3
 with canvas(oled) as draw:

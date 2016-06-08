@@ -1,21 +1,27 @@
 #!/bin/bash
 
+function getBit() {
+	local val=$1
+	local bit=$2
+	
+	local bval=$((1 << $bit))
+	echo $(( ($val & $bval) / $bval ))
+}
+
 logger "Shutdown requested at `date`.  Waiting for timeout"
+touch /tmp/no-screen-updates
+python /etc/oled/print.py "Shutdown" "Hold Button" "To Power Off"
 
-#echo "timer" > /sys/class/leds/bananapro\:green\:usr/trigger 
-#echo "100" > /sys/class/leds/bananapro\:green\:usr/delay_on
-#echo "100" > /sys/class/leds/bananapro\:green\:usr/delay_off
-
-LOOP=2
-while [ $LOOP -gt 0 ] ; do
-  python /etc/oled/print.py "Shutdown" "Hold Btn" $LOOP
+LOOP=3
+while [ $LOOP -gt 0 ] ; do  
   LOOP=$((LOOP - 1))
   REG=`i2cget -y -f 0 0x34 0x4a`
-  if [ $REG == "0x03" ] || [ $REG == "0x01" ]; then
+  if [ 1 == `getBit $REG 0` ] ; then
     logger "Long-press on power.  Shutting down..."
     python /etc/oled/print.py "Shutdown" "In progress..." " "
     sleep 2
     python /etc/oled/oledoff.py
+    rm /tmp/no-screen-updates
     shutdown -h now
     exit 0
   fi
@@ -26,7 +32,8 @@ done
 i2cset -y -f 0 0x34 0x4a 0x03
 
 logger "Didn't get long-press.  Not shutting down."
-python /etc/oled/print.py "Shutdown" "Canceled" " "
-#echo "none" > /sys/class/leds/bananapro\:green\:usr/trigger 
+python /etc/oled/print.py "Shutdown" "Canceled" "Resetting NICs"
+/etc/bin/drop-local-wifi.sh -f
+python /etc/oled/print.py "Networking" "Reset:" "wlan1 & eth0"
 sleep 3
-python /etc/oled/oledoff.py
+rm /tmp/no-screen-updates

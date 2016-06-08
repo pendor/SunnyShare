@@ -40,7 +40,7 @@ echo "Script running on box :: Phase $1 ..."
 
 
 # Armbian Banana-Pi
-PKGS="joe ntpdate php5-dev libfreetype6-dev libjpeg-dev python-setuptools python-dev libpython-dev attr acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
+PKGS="joe ntpdate php5-dev ifplugd python-pip libfreetype6-dev libjpeg-dev python-setuptools python-dev libpython-dev attr acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
 
 if [ "z$1" == "zinstall" ] ; then
 	echo "Installing packages..."
@@ -111,8 +111,9 @@ if [ "z$1" == "zinstall" ] ; then
 		echo "88128au" >> /etc/modules
 	fi
   
-  easy_install image
-  easy_install psutil
+  pip install image
+  pip install psutil
+  pip install Twisted
   
 	cd /usr/src
 	git clone https://github.com/hallard/ArduiPi_OLED.git
@@ -126,7 +127,7 @@ if [ "z$1" == "zinstall" ] ; then
 	
 elif [ "z$1" == "zservices" ] ; then
 	echo "Activating services..."
-	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd php5-fpm acpid setup-data axp20x"
+	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd php5-fpm acpid setup-data axp20x ifplugd logo update-screen"
 	for f in $SVSC ; do
 		echo "Enabling ${f}..."
 		systemctl enable $f

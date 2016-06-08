@@ -4,12 +4,17 @@
 if [ "$1" == "-f" ] || \
   ( iwgetid wlan1 | grep -q 'Sunny+Share' ) || \
   ! ( ifconfig wlan1 | grep 'inet addr' ) ; then 
+  ifdown eth0
   ifdown wlan1
-  sleep 10
-  while true ; do wpa_cli blacklist 04:8D:38:D6:C2:40 2>&1 > /dev/null ; done &
-  ifup wlan1
 
-  sleep 10
+  sleep 5
+  while true ; do wpa_cli blacklist 04:8D:38:D6:C2:40 2>&1 > /dev/null ; done &
+
+  ifup eth0
+  ifup wlan1
+  
+
+  sleep 5
   kill %1
 fi
 

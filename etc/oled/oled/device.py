@@ -93,29 +93,31 @@ class sh1106(device):
     data() methods are discouraged.
     """
 
-    def __init__(self, port=1, address=0x3C):
+    def __init__(self, port=1, address=0x3C, skipinit=False):
         super(sh1106, self).__init__(port, address)
         self.width = 128
         self.height = 64
         self.pages = self.height / 8
-
-        self.command(
-            const.DISPLAYOFF,
-            const.MEMORYMODE,
-            const.SETHIGHCOLUMN,      0xB0, 0xC8,
-            const.SETLOWCOLUMN,       0x10, 0x40,
-            const.SETCONTRAST,        0x7F,
-            const.SETSEGMENTREMAP,
-            const.NORMALDISPLAY,
-            const.SETMULTIPLEX,       0x3F,
-            const.DISPLAYALLON_RESUME,
-            const.SETDISPLAYOFFSET,   0x00,
-            const.SETDISPLAYCLOCKDIV, 0xF0,
-            const.SETPRECHARGE,       0x22,
-            const.SETCOMPINS,         0x12,
-            const.SETVCOMDETECT,      0x20,
-            const.CHARGEPUMP,         0x14,
-            const.DISPLAYON)
+        if not skipinit:
+            self.command(
+                const.DISPLAYOFF,
+                const.MEMORYMODE,
+                const.SETHIGHCOLUMN,      0xB0, 0xC8,
+                const.SETLOWCOLUMN,       0x10, 0x40,
+                const.SETCONTRAST,        0x7F,
+                const.SETSEGMENTREMAP,
+                const.NORMALDISPLAY,
+                const.SETMULTIPLEX,       0x3F,
+                const.DISPLAYALLON_RESUME,
+                const.SETDISPLAYOFFSET,   0x00,
+                const.SETDISPLAYCLOCKDIV, 0xF0,
+                const.SETPRECHARGE,       0x22,
+                const.SETCOMPINS,         0x12,
+                const.SETVCOMDETECT,      0x20,
+                const.CHARGEPUMP,         0x14,
+                const.DISPLAYON)
+        else:
+            self.command(const.DISPLAYON)
 
     def display(self, image):
         """
@@ -154,29 +156,32 @@ class ssd1306(device):
     called to affect the brightness. Direct use of the command() and
     data() methods are discouraged.
     """
-    def __init__(self, port=1, address=0x3C):
+    def __init__(self, port=1, address=0x3C, skipinit=False):
         super(ssd1306, self).__init__(port, address)
         self.width = 128
         self.height = 64
         self.pages = self.height / 8
 
-        self.command(
-            const.DISPLAYOFF,
-            const.SETDISPLAYCLOCKDIV, 0x80,
-            const.SETMULTIPLEX,       0x3F,
-            const.SETDISPLAYOFFSET,   0x00,
-            const.SETSTARTLINE,
-            const.CHARGEPUMP,         0x14,
-            const.MEMORYMODE,         0x00,
-            const.SEGREMAP,
-            const.COMSCANDEC,
-            const.SETCOMPINS,         0x12,
-            const.SETCONTRAST,        0xCF,
-            const.SETPRECHARGE,       0xF1,
-            const.SETVCOMDETECT,      0x40,
-            const.DISPLAYALLON_RESUME,
-            const.NORMALDISPLAY,
-            const.DISPLAYON)
+        if not skipinit:
+            self.command(
+                const.DISPLAYOFF,
+                const.SETDISPLAYCLOCKDIV, 0x80,
+                const.SETMULTIPLEX,       0x3F,
+                const.SETDISPLAYOFFSET,   0x00,
+                const.SETSTARTLINE,
+                const.CHARGEPUMP,         0x14,
+                const.MEMORYMODE,         0x00,
+                const.SEGREMAP,
+                const.COMSCANDEC,
+                const.SETCOMPINS,         0x12,
+                const.SETCONTRAST,        0xCF,
+                const.SETPRECHARGE,       0xF1,
+                const.SETVCOMDETECT,      0x40,
+                const.DISPLAYALLON_RESUME,
+                const.NORMALDISPLAY,
+                const.DISPLAYON)
+        else:
+            self.command(const.DISPLAYON)
 
     def display(self, image):
         """
