@@ -41,6 +41,7 @@ if(!isset($no_mac_register)) {
     if($m->get($mac) === FALSE) { 
       $m->add($mac, '1', $macCacheTtl);
       incHitCount();
+      system("sudo /etc/oled/printsmol.py 'Alert' 'New Msg'");
     } else {
     	$m->touch($mac, $macCacheTtl);
     }
@@ -378,6 +379,9 @@ function chat_addMessage($name, $message, $secId) {
   } else {
     die('Couldn\'t lock messages file.');
   }
+  
+  $arg = escapeshellarg($message);
+  system("/usr/bin/sudo /etc/oled/printsmol.py 'Alert' 'New Msg' $arg");
   
   return $newJson;
 }

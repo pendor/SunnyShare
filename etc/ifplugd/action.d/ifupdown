@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+case "$2" in
+up)
+        /sbin/ifup $1
+        ;;
+down)
+        /sbin/ifdown $1
+        ;;
+esac
+
+# Should kill any sleeps in update-screen and force a re-draw
+killall sleep

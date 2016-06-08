@@ -6,12 +6,21 @@ FIRST=1
 
 SEQ=0
 while true ; do
+  OVERHEAT=`head -n1 /sys/power/axp_pmu/pmu/overheat`
+  AC_IN=`head -n1 /sys/power/axp_pmu/ac/connected`
+  CHARGING=`head -n1 /sys/power/axp_pmu/battery/charging`
+  BAT_PCT=`head -n1 /sys/power/axp_pmu/battery/capacity`
+  
   if [ $FIRST == 1 ] ; then
-    PREV_AC_IN=`head -n1 /sys/power/axp_pmu/ac/connected`
-    PREV_CHARGING=`head -n1 /sys/power/axp_pmu/battery/charging`
+    PREV_AC_IN=$AC_IN
+    PREV_CHARGING=$CHARGING
     FIRST=0  
   else
-    sleep 1
+    if [ $AC_IN == "1" ] ; then
+      sleep 1
+    else
+      sleep 30
+    fi
   fi
   
   if [ $SEQ == 2 ] ; then
@@ -24,10 +33,10 @@ while true ; do
     continue
   fi
   
-  OVERHEAT=`head -n1 /sys/power/axp_pmu/pmu/overheat`
-  AC_IN=`head -n1 /sys/power/axp_pmu/ac/connected`
-  CHARGING=`head -n1 /sys/power/axp_pmu/battery/charging`
-  BAT_PCT=`head -n1 /sys/power/axp_pmu/battery/capacity`
+  
+  if [ $BAT_PCT -gt 94 ] ; then
+    BAT_PCT=100
+  fi
   
   if [ $OVERHEAT == "1" ] ; then
     TEMP=$(( `head -n1 /sys/power/axp_pmu/pmu/temp` / 1000 ))
@@ -91,15 +100,20 @@ while true ; do
   IPE=`ifconfig eth0 | grep 'inet addr' | awk '{print $2}' | cut -f2 -d:`
   
   if [ -z $IPW ] ; then
-    IPW="(None)"
+    STAT1="(None):w"
+  else
+    STAT1="$IPW:w"
   fi
   
   if [ -z $IPE ] ; then
-    IPE="(None)"
+    if [ -z $IPW ] ; then
+      STAT2="(None):e"
+    else
+      STAT2=`iwconfig wlan1 | perl -nle '/ESSID:\"([^\"]+)\"/ &&  print $1;'`
+    fi
+  else
+    STAT2="$IPE:e"
   fi
-  
-  STAT1="$IPW:w"
-  STAT2="$IPE:e"
   
   $PRINT "$STAT0" "$STAT1" "$STAT2"
   

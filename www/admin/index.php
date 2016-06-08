@@ -7,7 +7,8 @@ checkAdmin();
 printHeader(true);
 ?>
 
-<div class="box">Admin Area :: <b>Active Sessions:</b> <?= getActiveSessions() ?> :: <b>Assoc. Count:</b> <?= getHitCount() ?></div>
+<div class="box">Admin Area :: <b>Active Sessions:</b> <?= getActiveSessions() ?> :: <b>Assoc. Count:</b> <?= getHitCount() ?><br/>
+  <b>Date:</b> <?=`date`?> :: <b>HWClock:</b> <?=`sudo /sbin/hwclock`?></div>
 
 <h1>Recent Uploads &amp; Attention Required</h1>
 <?php
