@@ -174,7 +174,7 @@ class ssd1306(device):
                 const.SEGREMAP,
                 const.COMSCANDEC,
                 const.SETCOMPINS,         0x12,
-                const.SETCONTRAST,        0xCF,
+                const.SETCONTRAST,        0x00,
                 const.SETPRECHARGE,       0xF1,
                 const.SETVCOMDETECT,      0x40,
                 const.DISPLAYALLON_RESUME,

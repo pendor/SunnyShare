@@ -20,7 +20,7 @@ while [ $LOOP -gt 0 ] ; do
     logger "Long-press on power.  Shutting down..."
     python /etc/oled/print.py "Shutdown" "In progress..." " "
     sleep 2
-    python /etc/oled/oledoff.py
+    /etc/oled/oledoff.sh
     rm /tmp/no-screen-updates
     shutdown -h now
     exit 0
