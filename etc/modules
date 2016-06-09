@@ -6,7 +6,7 @@
 # Various
 # rtc-ds1307
 8812au
-8192cu
+rtl8192cu
 
 ledtrig-timer
 

@@ -1,0 +1,6 @@
+[Unit]
+Description=Force reconnect WiFi & ethernet
+
+[Service]
+Type=oneshot
+ExecStart=/etc/bin/drop-local-wifi.sh

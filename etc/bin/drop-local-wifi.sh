@@ -4,18 +4,27 @@
 if [ "$1" == "-f" ] || \
   ( iwgetid wlan1 | grep -q 'Sunny+Share' ) || \
   ! ( ifconfig wlan1 | grep 'inet addr' ) ; then 
-  ifdown eth0
-  ifdown wlan1
+  touch /tmp/no-screen-updates
+  python /etc/oled/print.py "Networking" "Resetting" "NICs"
+  
+  ifdown --force eth0
+  ifdown --force wlan1
 
-  sleep 5
-  while true ; do wpa_cli blacklist 04:8D:38:D6:C2:40 2>&1 > /dev/null ; done &
+  killall -9 dhclient wpa_supplicant wpa_cli
+
+  sleep 2
+  
+  while true ; do wpa_cli blacklist 04:8D:38:D6:C2:40 2>&1 > /dev/null ; sleep 1 ; done &
 
   ifup eth0
   ifup wlan1
   
-
   sleep 5
   kill %1
+  
+  python /etc/oled/print.py "Networking" "Reset:" "wlan1 & eth0"
+  sleep 3
+  rm -f /tmp/no-screen-updates
 fi
 
 

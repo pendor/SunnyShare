@@ -127,7 +127,7 @@ if [ "z$1" == "zinstall" ] ; then
 	
 elif [ "z$1" == "zservices" ] ; then
 	echo "Activating services..."
-	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd php5-fpm acpid setup-data axp20x ifplugd logo update-screen"
+	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd acpid setup-data axp20x ifplugd logo update-screen"
 	for f in $SVSC ; do
 		echo "Enabling ${f}..."
 		systemctl enable $f
@@ -138,6 +138,10 @@ elif [ "z$1" == "zservices" ] ; then
 		echo "Enabling ${f}..."
 		update-rc.d $f defaults
 	done
+  
+  # Don't want lirc...
+  systemctl disable lircd || true
+  apt-get remove lirc || true
 	
 elif [ "z$1" == "zreboot" ] ; then
 	echo "Rebooting box..."

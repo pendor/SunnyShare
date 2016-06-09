@@ -32,8 +32,8 @@ done
 i2cset -y -f 0 0x34 0x4a 0x03
 
 logger "Didn't get long-press.  Not shutting down."
-python /etc/oled/print.py "Shutdown" "Canceled" "Resetting NICs"
-/etc/bin/drop-local-wifi.sh -f
-python /etc/oled/print.py "Networking" "Reset:" "wlan1 & eth0"
-sleep 3
-rm /tmp/no-screen-updates
+python /etc/oled/print.py "Shutdown" "Canceled" " "
+sleep 2
+rm -f /tmp/no-screen-updates
+
+( systemctl restart drop-local-wifi.service & )

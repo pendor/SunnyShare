@@ -41,7 +41,7 @@ if(!isset($no_mac_register)) {
     if($m->get($mac) === FALSE) { 
       $m->add($mac, '1', $macCacheTtl);
       incHitCount();
-      system("sudo /etc/oled/printsmol.py 'Alert' 'New Msg'");
+      system("sudo /etc/oled/printsmol.py 'Alert' 'New User'");
     } else {
     	$m->touch($mac, $macCacheTtl);
     }

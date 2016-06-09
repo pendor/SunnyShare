@@ -6,10 +6,13 @@ FIRST=1
 
 SEQ=0
 while true ; do
+  # Not sure what the diff is between these, but bananatemp 
+  # uses charger/charging & seems to be okay.
+  #CHARGING=`head -n1 /sys/power/axp_pmu/battery/charging`
+  CHARGING=`head -n1 /sys/power/axp_pmu/charger/charging`
+  BAT_PCT=`head -n1 /sys/power/axp_pmu/battery/capacity`
   OVERHEAT=`head -n1 /sys/power/axp_pmu/pmu/overheat`
   AC_IN=`head -n1 /sys/power/axp_pmu/ac/connected`
-  CHARGING=`head -n1 /sys/power/axp_pmu/battery/charging`
-  BAT_PCT=`head -n1 /sys/power/axp_pmu/battery/capacity`
   
   if [ $FIRST == 1 ] ; then
     PREV_AC_IN=$AC_IN
@@ -19,7 +22,24 @@ while true ; do
     if [ $AC_IN == "1" ] ; then
       sleep 1
     else
-      sleep 30
+      # If we're on battery, don't update the screen for 30 seconds,
+      # BUT check to see if we're on A/C every three seconds.  Wake up
+      # and update if we get switched so we'll update quickly on-plug.
+      C=10
+      while [ $C -gt 0 ] ; do
+        sleep 3
+        C=$(( $C - 1 ))
+        
+        NEW_AC_IN=`head -n1 /sys/power/axp_pmu/ac/connected`
+        if [ $NEW_AC_IN == "1" ] || \
+          [ $NEW_AC_IN != $PREV_AC_IN ] || \
+          [ `head -n1 /sys/power/axp_pmu/charger/charging` != $CHARGING ] ; then
+          AC_IN=$NEW_AC_IN
+          CHARGING=`head -n1 /sys/power/axp_pmu/charger/charging`
+          BAT_PCT=`head -n1 /sys/power/axp_pmu/battery/capacity`
+          break
+        fi
+      done
     fi
   fi
   
