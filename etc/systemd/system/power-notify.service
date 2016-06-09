@@ -1,0 +1,10 @@
+[Unit]
+Description=Update power status
+After=logo.service
+
+[Service]
+ExecStart=/etc/bin/power-notify.sh
+Restart=always
+
+[Install]
+WantedBy=logo.service
