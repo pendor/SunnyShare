@@ -102,7 +102,7 @@ while true ; do
   
   STAT0="$STAT0]"
   
-  if [ $SEQ -ge 8 ] ; then
+  if [ $SEQ -ge 9 ] ; then
     SEQ=0
   else
     SEQ=$(( $SEQ + 1 ))
@@ -169,6 +169,11 @@ while true ; do
   	storage_total=$(df -h $storage | grep $storage | awk '/\// {print $(NF-4)}')
     STAT1="data: $storage_usage %"
     STAT2=" of $storage_total"
+  elif [ $SEQ -eq 9 ] ; then
+    newfiles=`/usr/bin/find /mnt/data/roots -mtime -5 -type f -not -name .noupload | wc -l`
+    report=`/usr/bin/find /mnt/data/roots -type f -mtime -5 -exec /usr/bin/attr -q -g ssreport "{}" \; -print | grep -e '^R.*' | wc -l`
+    STAT1="New: $newfiles"
+    STAT2="Rpt: $report"
   fi
   
   $PRINT "$STAT0" "$STAT1" "$STAT2"
