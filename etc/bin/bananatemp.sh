@@ -79,9 +79,8 @@ if [[ "$status_battery_connected" == "1" ]]; then
   else
     batt_under=""
   fi
-    
         
-        # dispay charging / percentage
+  # dispay charging / percentage
 	if [[ "$status_ac_connect" == "1" ]]  && [ "1" == $status_battery_charging ] ; then
 		status_battery_text="Charging ${battery_percent}% :: $battery_voltage V @ $battery_in_ma mA $batt_under"
 	elif [[ "$status_ac_connect" == "1" ]] && [ "0" == $status_battery_charging ] ; then
