@@ -10,6 +10,24 @@ SEQ=0
 # and we'd smash each other's updates
 sleep 2
 
+DATA=/mnt/data
+ROOTS=$DATA/roots
+
+
+function countNewReport() {
+  NEW=0
+  RPT=0
+  while IFS= read -r -d $'\0' file; do
+    NEW=$(( $NEW + 1 ))
+    
+    if [ "R" == `attr -q -g ssreport "$file"` ] ; then
+      RPT=$(( $RPT + 1 ))
+    fi
+  done < <(find $ROOTS -type f -mtime -5 -not -name .noupload -print0)
+  
+  echo "$NEW $RPT"
+}
+
 while true ; do
   if [ -f /tmp/no-screen-updates ] ; then
     sleep 2
@@ -114,17 +132,17 @@ while true ; do
     STAT2=" of $root_total"
     
   elif [ $SEQ -eq 5 ] ; then
-    storage=/mnt/data
-  	storage_usage=$(df -h $storage | grep $storage | awk '/\// {print $(NF-1)}' | sed 's/%//g')
-  	storage_total=$(df -h $storage | grep $storage | awk '/\// {print $(NF-4)}')
+  	storage_usage=$(df -h $DATA | grep $DATA | awk '/\// {print $(NF-1)}' | sed 's/%//g')
+  	storage_total=$(df -h $DATA | grep $DATA | awk '/\// {print $(NF-4)}')
     STAT1="data: $storage_usage %"
     STAT2=" of $storage_total"
     
   elif [ $SEQ -eq 6 ] ; then
-    newfiles=`/usr/bin/find /mnt/data/roots -mtime -5 -type f -not -name .noupload | wc -l`
-    report=`/usr/bin/find /mnt/data/roots -type f -mtime -5 -exec /usr/bin/attr -q -g ssreport "{}" \; -print | grep -e '^R.*' | wc -l`
-    STAT1="New: $newfiles"
-    STAT2="Rpt: $report"
+    counts=`countNewReport`
+    N=`echo $counts | awk '{print $1}'`
+    R=`echo $counts | awk '{print $2}'`
+    STAT1="New: $N"
+    STAT2="Rpt: $R"
   fi
   
   $PRINT "$STAT0" "$STAT1" "$STAT2"

@@ -28,8 +28,8 @@ iface eth0 inet dhcp
 #    network 10.10.10.0
 #    broadcast 10.10.10.255
 
-allow-hotplug wlan1
-iface wlan1 inet manual
-wpa-roam /etc/wpa_supplicant.conf 
+# allow-hotplug wlan1
+# iface wlan1 inet manual
+# wpa-roam /etc/wpa_supplicant.conf 
 
 iface default inet dhcp

@@ -15,6 +15,9 @@ if [ -d /sys/power/axp_pmu ] || [ -e /sys/bus/i2c/drivers/axp20x/0-0034 ] ; then
    
   # 1800mA max charge current
   i2cset -y -f 0 0x34 0x33 0xcf
+  
+  # Might keep us from energizing VUSB when shutdown?
+  i2cset -f -y 0 0x34 0x8b 0x9
 fi
 
 echo "none" > /sys/class/leds/bananapro\:green\:usr/trigger
