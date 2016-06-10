@@ -6,3 +6,4 @@ www/config.php
 .DS_Store
 etc/wpa_supplicant.conf
 images/sun
+images/sun-bin

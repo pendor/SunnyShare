@@ -13,3 +13,6 @@ for f in *.dts ; do
 	echo "$f -> $T"
 	dtc -O dtb -o $T -b 0 $f
 done
+
+cd ..
+mkimage -C none -A arm -T script -d /boot/boot.cmd /boot/boot.scr
