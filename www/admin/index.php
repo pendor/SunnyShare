@@ -28,7 +28,6 @@ printHeader(true);
     $reported = array();
     foreach($xattrOut as $f) {
       // If first letter is the report value, drop it & add it to list of reported.
-      echo "Checking line $f<br/>";
       if(substr($f, 0, 1) == XA_REPORTED) {
         $reported[] = substr($f, 1);
       }
