@@ -40,8 +40,7 @@ echo "Script running on box :: Phase $1 ..."
 
 
 # Armbian Banana-Pi
-PKGS="joe ntpdate php5-dev python-pip libfreetype6-dev libjpeg-dev python-setuptools python-dev libpython-dev attr acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
-# ifplugd
+PKGS="joe ntpdate php5-dev ifplugd python-pip libfreetype6-dev libjpeg-dev python-setuptools python-dev libpython-dev attr acpid watchdog lighttpd dkms git php-file php-file-iterator php5 php5-cgi php5-cli php5-curl php5-fpm php5-json php5-memcached lighttpd hostapd forked-daapd dnsmasq minidlna wpasupplicant memcached php5-mcrypt i2c-tools"
 
 if [ "z$1" == "zinstall" ] ; then
 	echo "Installing packages..."
@@ -128,8 +127,7 @@ if [ "z$1" == "zinstall" ] ; then
 	
 elif [ "z$1" == "zservices" ] ; then
 	echo "Activating services..."
-	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd acpid setup-data axp20x logo update-screen power-notify"
-  #ifplugd
+	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd acpid setup-data axp20x logo update-screen power-notify ifplugd"
 	for f in $SVSC ; do
 		echo "Enabling ${f}..."
 		systemctl enable $f
