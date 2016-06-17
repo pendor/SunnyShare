@@ -18,6 +18,10 @@ if [ -d /sys/power/axp_pmu ] || [ -e /sys/bus/i2c/drivers/axp20x/0-0034 ] ; then
   
   # Might keep us from energizing VUSB when shutdown?
   i2cset -f -y 0 0x34 0x8b 0x9
+  
+  # Enable overheat shutdown for AXP209
+  i2cset -f -y -m 0x4 0 0x34 0x8f 0x4
 fi
 
+# No blinky light...
 echo "none" > /sys/class/leds/bananapro\:green\:usr/trigger
