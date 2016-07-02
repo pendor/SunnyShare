@@ -4,7 +4,7 @@
 # at boot time, one per line. Lines beginning with "#" are ignored.
 
 # Various
-# rtc-ds1307
+rtc-ds1307
 8812au
 rtl8192cu
 

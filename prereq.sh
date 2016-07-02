@@ -127,7 +127,7 @@ if [ "z$1" == "zinstall" ] ; then
 	
 elif [ "z$1" == "zservices" ] ; then
 	echo "Activating services..."
-	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd acpid setup-data axp20x logo update-screen power-notify ifplugd"
+	SVCS="minidlna lighttpd dnsmasq hostapd memcached forked-daapd acpid setup-data axp20x logo update-screen power-notify ifplugd rtc-i2c"
 	for f in $SVSC ; do
 		echo "Enabling ${f}..."
 		systemctl enable $f
